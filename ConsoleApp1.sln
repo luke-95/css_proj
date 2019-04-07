@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28729.10
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseApp", "ConsoleApp1\DatabaseApp.csproj", "{80A60CA9-09EF-4D3A-9332-95DB2C12AD43}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabaseApp", "ConsoleApp1\DatabaseApp.csproj", "{80A60CA9-09EF-4D3A-9332-95DB2C12AD43}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseManagement", "DatabaseManagement\DatabaseManagement.csproj", "{65380A37-121B-4BDF-AFF6-B5387EB39690}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{80A60CA9-09EF-4D3A-9332-95DB2C12AD43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80A60CA9-09EF-4D3A-9332-95DB2C12AD43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80A60CA9-09EF-4D3A-9332-95DB2C12AD43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65380A37-121B-4BDF-AFF6-B5387EB39690}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65380A37-121B-4BDF-AFF6-B5387EB39690}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65380A37-121B-4BDF-AFF6-B5387EB39690}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65380A37-121B-4BDF-AFF6-B5387EB39690}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
