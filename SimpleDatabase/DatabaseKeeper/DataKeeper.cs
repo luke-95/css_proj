@@ -80,12 +80,13 @@ namespace DatabaseKeeper
 
         public void UpdateTable(string tableName, JObject table)
         {
+            tableName += ".json";
             if (!DatabasesList.ContainsKey(databaseName))
                 throw new Exception("Database Not Loaded!");
             if (!DatabaseTables[databaseName].Contains(tableName))
                 throw new Exception("Table dose not exist!");
 
-            var path = DatabasesList[databaseName] + tableName + ".json";
+            var path = DatabasesList[databaseName] + tableName;
 
             var file = File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
             var writer = new StreamWriter(file);
@@ -141,5 +142,22 @@ namespace DatabaseKeeper
 
         }
 
+        public void AddEntries(string tableName, string columnName, List<string> entriesList)
+        {
+            var table = ReadTable(tableName);
+            var oldEntries = table.GetValue(columnName).Values<string>().ToList();
+            var newEntries = new JArray();
+
+            foreach (var nEntry in entriesList)
+            {
+                oldEntries.Add(nEntry);
+            }
+
+            if (table.Remove(columnName))
+            {
+                table.Add(columnName, JToken.FromObject(oldEntries));
+            }
+            UpdateTable(tableName,table);
+        }
     }
 }
