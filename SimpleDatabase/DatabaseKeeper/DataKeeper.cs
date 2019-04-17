@@ -78,6 +78,22 @@ namespace DatabaseKeeper
             DatabaseTables[databaseName].Add(tableName);
         }
 
+        public void UpdateTable(string tableName, JObject table)
+        {
+            if (!DatabasesList.ContainsKey(databaseName))
+                throw new Exception("Database Not Loaded!");
+            if (!DatabaseTables[databaseName].Contains(tableName))
+                throw new Exception("Table dose not exist!");
+
+            var path = DatabasesList[databaseName] + tableName + ".json";
+
+            var file = File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            var writer = new StreamWriter(file);
+            writer.Write(table.ToString());
+            writer.Flush();
+            file.Close();
+        }
+
         public void DeleteTable(string tableName)
         {
             if (!DatabasesList.ContainsKey(databaseName))
@@ -111,6 +127,18 @@ namespace DatabaseKeeper
                 Console.WriteLine(e);
                 return null;
             }
+        }
+
+        public void AddColumns(string tableName, List<string> columnNames)
+        {
+            var table = ReadTable(tableName);
+
+            foreach (var column in columnNames)
+            {
+                table.Add(new JProperty(column, new JArray()));
+                UpdateTable(tableName, table);
+            }
+
         }
 
     }
