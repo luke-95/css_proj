@@ -14,11 +14,13 @@ namespace DatabaseKeeper
         private Dictionary<string, string> DatabasesList;
         private Dictionary<string, List<string>> DatabaseTables;
         private string databaseName;
+        private IDatabaseKeeper keeper;
 
-        public DataKeeper()
+        public DataKeeper(IDatabaseKeeper keeper)
         {
             DatabasesList=new Dictionary<string, string>();
             DatabaseTables = new Dictionary<string, List<string>>();
+            this.keeper = keeper;
         }
 
         public void CreateDatabase(string path)
@@ -56,110 +58,37 @@ namespace DatabaseKeeper
         public void SelectDatabase(string databaseName)
         {
             this.databaseName = databaseName;
+            keeper.SetDatabase(DatabaseTables,DatabasesList,databaseName);
+        }
+
+        public object ReadTable(string tableName)
+        {
+            return keeper.ReadTable(tableName);
         }
 
         public void CreateTable(string tableName, List<string> columns)
         {
-            if(!DatabasesList.ContainsKey(databaseName))
-                throw new Exception("Database Not Loaded!");
-            
-            JObject table = new JObject(
-                from column in columns select new JProperty(column,new JArray())
-                );
-
-            var path = DatabasesList[databaseName]+tableName+".json";
-
-            var file = File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-            var writer = new StreamWriter(file);
-            writer.Write(table.ToString());
-            writer.Flush();
-            file.Close();
-
-            DatabaseTables[databaseName].Add(tableName);
+            keeper.CreateTable(tableName, columns);
         }
 
-        public void UpdateTable(string tableName, JObject table)
+        public void UpdateTable(string tableName, object table)
         {
-            tableName += ".json";
-            if (!DatabasesList.ContainsKey(databaseName))
-                throw new Exception("Database Not Loaded!");
-            if (!DatabaseTables[databaseName].Contains(tableName))
-                throw new Exception("Table dose not exist!");
-
-            var path = DatabasesList[databaseName] + tableName;
-
-            var file = File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-            var writer = new StreamWriter(file);
-            writer.Write(table.ToString());
-            writer.Flush();
-            file.Close();
+            keeper.UpdateTable(tableName, table);
         }
 
         public void DeleteTable(string tableName)
         {
-            if (!DatabasesList.ContainsKey(databaseName))
-                throw new Exception("Database Not Loaded!");
-            if (!DatabaseTables[databaseName].Contains(tableName))
-                throw new Exception("Table dose not exist!");
-
-            var path = DatabasesList[databaseName] + tableName + ".json";
-
-            File.Delete(path);
-        }
-
-        public JObject ReadTable(string tableName)
-        {
-            try
-            {
-                JObject table;
-
-                var path = DatabasesList[databaseName] + tableName + ".json";
-
-                using (StreamReader file = File.OpenText(path))
-                using (JsonTextReader jreader = new JsonTextReader(file))
-                {
-                    table = (JObject) JToken.ReadFrom(jreader);
-                }
-
-                return table;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return null;
-            }
+            keeper.DeleteTable(tableName);
         }
 
         public void AddColumns(string tableName, List<string> columnNames)
         {
-            var table = ReadTable(tableName);
-
-            foreach (var column in columnNames)
-            {
-                table.Add(new JProperty(column, new JArray()));
-                UpdateTable(tableName, table);
-            }
-
+            keeper.AddColumns(tableName,columnNames);
         }
 
         public void AddEntries(string tableName, string columnName, List<string> entriesList)
         {
-            var table = ReadTable(tableName);
-            var oldEntries = table.GetValue(columnName).Values<string>().ToList();
-            var newEntries = new JArray();
-
-            foreach (var nEntry in entriesList)
-            {
-                oldEntries.Add(nEntry);
-            }
-
-            if (table.Remove(columnName))
-            {
-                table.Add(columnName, JToken.FromObject(oldEntries));
-            }
-            UpdateTable(tableName,table);
+            keeper.AddEntries(tableName,columnName,entriesList);
         }
-
-        
     }
 }
