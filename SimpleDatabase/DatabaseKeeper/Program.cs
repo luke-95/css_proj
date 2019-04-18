@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Importer;
 
 namespace DatabaseKeeper
 {
@@ -25,8 +27,11 @@ namespace DatabaseKeeper
             //dk.CreateTable("MyFirstTable",columns);
             //dk.DeleteTable("MyFirstTable");
             //var table = dk.ReadTable("MyFirstTable");
-            dk.AddEntries("MyFirstTable", "Col1", values);
+            //dk.AddEntries("MyFirstTable", "Col1", values);
             //dk.AddColumns("MyFirstTable", ncolumns);
+
+            Importer.Importer importer= new Importer.Importer();
+            var parsedcsv = importer.ReadCsv(@"C:\scrap\AJsonDB\exampleCSV.csv");
         }
     }
 }
