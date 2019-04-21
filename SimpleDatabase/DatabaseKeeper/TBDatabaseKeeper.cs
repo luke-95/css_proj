@@ -99,8 +99,24 @@ namespace DatabaseKeeper
             return TBtable;
         }
 
+        public void RenameTable(string oldTableName, string newTableName)
+        {
+            oldTableName = oldTableName + ".TB";
+            newTableName = newTableName + ".TB";
+
+            var path = DatabasesList[databaseName] + oldTableName;
+            var newpath = DatabasesList[databaseName] + newTableName;
+
+            File.Move(path, newpath);
+
+            var oldTableIndex = DatabaseTables[databaseName].IndexOf(oldTableName);
+            DatabaseTables[databaseName][oldTableIndex] = newTableName;
+        }
+
         public void AddColumns(string tableName, List<string> columnNames)
         {
+            tableName = tableName + ".TB";
+
             if (!DatabasesList.ContainsKey(databaseName))
                 throw new Exception("Database Not Loaded!");
             if (!DatabaseTables[databaseName].Contains(tableName))
@@ -113,6 +129,23 @@ namespace DatabaseKeeper
             {
                 writer.WriteLine("!"+columnName);
             }
+        }
+
+        public List<string> ReadColumn(string tableName, string columnName)
+        {
+            var table = (List<string>)ReadTable(tableName);
+
+            var columnIndex = table.IndexOf("!" + columnName);
+            var columnEntries = new List<string>();
+
+            columnIndex++;
+            while(columnIndex<table.Count && !table[columnIndex].StartsWith("!"))
+            {
+                columnEntries.Add(table[columnIndex].Split(new char[] { '-' }, 2)[1]);
+                columnIndex++;
+            }
+
+            return columnEntries;
         }
 
         public void AddEntries(string tableName, string columnName, List<string> entriesList)

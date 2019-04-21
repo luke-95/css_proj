@@ -85,5 +85,9 @@ namespace DatabaseKeeper
         {
             keeper.AddEntries(tableName,columnName,entriesList);
         }
+        public List<string> ReadColumn(string tableName, string columnName)
+        {
+            return keeper.ReadColumn(tableName, columnName);
+        }
     }
 }
