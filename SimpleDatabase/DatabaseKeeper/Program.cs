@@ -26,11 +26,12 @@ namespace DatabaseKeeper
             //dk.LoadDatabase("AJsonDB", @"C:\scrap");
             dk.SelectDatabase("AJsonDB");
 
-            dk.CreateTable("MyFirstTable",columns);
+            //dk.CreateTable("MyFirstTable",columns);
             //dk.DeleteTable("MyFirstTable");
-            var table = dk.ReadTable("MyFirstTable");
-            dk.AddEntries("MyFirstTable", "Col1", values);
+            //var table = dk.ReadTable("MyFirstTable");
+            //dk.AddEntries("MyFirstTable", "Col1", values);
             //dk.AddColumns("MyFirstTable", ncolumns);
+            var columnEntries = dk.ReadColumn("MyFirstTable", "Col1");
 
             //Importer.Importer importer= new Importer.Importer();
             //var parsedcsv = importer.ReadCsv(@"C:\scrap\AJsonDB\exampleCSV.csv");

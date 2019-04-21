@@ -125,5 +125,15 @@ namespace DatabaseKeeper
             this.DatabasesList = databasesList;
             this.databaseName = databaseName;
         }
+
+        public void RenameTable(string oldTableName, string newTableName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<string> ReadColumn(string tableName, string columnName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
