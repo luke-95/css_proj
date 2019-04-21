@@ -1,11 +1,5 @@
-﻿
-
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace DatabaseKeeper
 {
@@ -23,8 +17,9 @@ namespace DatabaseKeeper
             this.keeper = keeper;
         }
 
-        public void CreateDatabase(string path)
+        public void CreateDatabase(string databaseName, string path)
         {
+            this.databaseName = databaseName;
             FileInfo file = new FileInfo(path+$"\\{databaseName}\\{databaseName}.txt");
             file.Directory.Create();
             DatabasesList.Add(databaseName, path+$"\\{databaseName}\\");

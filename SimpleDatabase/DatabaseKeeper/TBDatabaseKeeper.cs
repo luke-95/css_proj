@@ -26,7 +26,8 @@ namespace DatabaseKeeper
             if (!DatabasesList.ContainsKey(databaseName))
                 throw new Exception("Database Not Loaded!");
 
-            var path = DatabasesList[databaseName] + tableName + ".TB";
+            tableName = tableName + ".TB";
+            var path = DatabasesList[databaseName] + tableName;
 
             var file = File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
             var writer = new StreamWriter(file);
@@ -38,13 +39,22 @@ namespace DatabaseKeeper
             writer.Flush();
             file.Close();
 
-            DatabaseTables[databaseName].Add(tableName);
+            try
+            {
+                DatabaseTables[databaseName].Add(tableName);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                DatabaseTables = new Dictionary<string, List<string>>();
+                DatabaseTables[databaseName] = new List<string>();
+                DatabaseTables[databaseName].Add(tableName);
+            }
+            
         }
 
         public void UpdateTable(string tableName, object table)
         {
             var TBtable = (List<string>) table;
-            tableName += ".TB";
 
             if (!DatabasesList.ContainsKey(databaseName))
                 throw new Exception("Database Not Loaded!");
@@ -64,19 +74,21 @@ namespace DatabaseKeeper
 
         public void DeleteTable(string tableName)
         {
+            tableName = tableName + ".TB";
             if (!DatabasesList.ContainsKey(databaseName))
                 throw new Exception("Database Not Loaded!");
             if (!DatabaseTables[databaseName].Contains(tableName))
                 throw new Exception("Table dose not exist!");
 
-            var path = DatabasesList[databaseName] + tableName + ".TB";
+            var path = DatabasesList[databaseName] + tableName;
 
             File.Delete(path);
         }
 
         public object ReadTable(string tableName)
         {
-            var path = DatabasesList[databaseName] + tableName + ".TB";
+            tableName = tableName + ".TB";
+            var path = DatabasesList[databaseName] + tableName;
             var TBtable= new List<string>();
             using (StreamReader file = File.OpenText(path))
                 while (!file.EndOfStream)
@@ -105,12 +117,14 @@ namespace DatabaseKeeper
 
         public void AddEntries(string tableName, string columnName, List<string> entriesList)
         {
+            tableName = tableName + ".TB";
+
             if (!DatabasesList.ContainsKey(databaseName))
                 throw new Exception("Database Not Loaded!");
             if (!DatabaseTables[databaseName].Contains(tableName))
                 throw new Exception("Table dose not exist!");
 
-            var path = DatabasesList[databaseName] + tableName + ".TB";
+            var path = DatabasesList[databaseName] + tableName;
             var file = File.Open(path, FileMode.Open, FileAccess.ReadWrite);
             var writer = new StreamWriter(file);
             var reader = new StreamReader(file);
