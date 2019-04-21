@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Importer;
-using Newtonsoft.Json.Linq;
 
 namespace DatabaseKeeper
 {
@@ -23,8 +22,8 @@ namespace DatabaseKeeper
             ncolumns.AddRange(new []{"Col4","Col5"});
             values.AddRange(new []{"a1","a2","a3"});
 
-            //dk.CreateDatabase("AJsonDB", @"C:\scrap");
-            dk.LoadDatabase("AJsonDB", @"C:\scrap");
+            dk.CreateDatabase("AJsonDB", @"C:\scrap");
+            //dk.LoadDatabase("AJsonDB", @"C:\scrap");
             dk.SelectDatabase("AJsonDB");
 
             dk.CreateTable("MyFirstTable",columns);
