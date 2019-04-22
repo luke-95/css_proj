@@ -313,5 +313,10 @@ namespace DatabaseKeeper
             }
             return columns;
         }
+
+        public List<string> GetTableNames()
+        {
+            return DatabaseTables.Keys.ToList<string>();
+        }
     }
 }

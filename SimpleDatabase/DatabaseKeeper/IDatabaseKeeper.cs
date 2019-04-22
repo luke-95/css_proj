@@ -21,5 +21,7 @@ namespace DatabaseKeeper
         void InsertEntries(string tableName, string columnName, int index, List<string> newEntries);
         void DeleteEntries(string tableName, string columnName, int startIndex, int stopIndex);
         List<string> GetColumnNames(string tableName);
+
+        List<string> GetTableNames();
     }
 }

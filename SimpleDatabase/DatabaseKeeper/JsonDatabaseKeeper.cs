@@ -160,5 +160,9 @@ namespace DatabaseKeeper
         {
             throw new NotImplementedException();
         }
+        public List<string> GetTableNames()
+        {
+            return DatabaseTables.Keys.ToList<string>();
+        }
     }
 }
