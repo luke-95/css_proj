@@ -58,7 +58,7 @@
         <!--Row 4-->
         <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal">
             <Label Content="Table:" VerticalAlignment="Center" Width="65"/>
-            <ComboBox x:Name="TableNamesComboBox" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,0" Width="160"/>
+            <ComboBox x:Name="TableNamesComboBox" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,0" Width="160" SelectionChanged="TableNamesComboBox_SelectionChanged"/>
         </StackPanel>
         <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" Margin="10,0" HorizontalAlignment="Right">
             <TextBox x:Name="ColumnNameTextBox" Width="140" Margin="0,0,10,0" IsManipulationEnabled="True" Text="&lt;ColumnName&gt;" TextAlignment="Center" VerticalAlignment="Center"/>

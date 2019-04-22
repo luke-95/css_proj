@@ -13,8 +13,8 @@ namespace SimpleDatabase
     public partial class MainWindow : Window
     {
         private readonly string DATABASE_PATH = @"D:\Facultate\Master_1\CSSoft\databases";
-        string DATABASE_NAME = "NewJsonDB";
-        string TABLE_NAME = "SomeTable";
+        string selectedDatabase = "NewJsonDB";
+        string selectedTable = "SomeTable";
 
         TBDatabaseKeeper keeper;
         DataKeeper dataKeeper;
@@ -28,33 +28,115 @@ namespace SimpleDatabase
             dataKeeper = new DataKeeper(keeper);
 
             // --- Load Database Names
-            dataKeeper.LoadDatabase(DATABASE_NAME, DATABASE_PATH);
-            dataKeeper.SelectDatabase(DATABASE_NAME);
+            dataKeeper.LoadDatabase(selectedDatabase, DATABASE_PATH);
+            dataKeeper.SelectDatabase(selectedDatabase);
+
             ReloadDatabaseNames();
-            DATABASE_NAME = DatabaseNamesComboBox.SelectedValue.ToString();
+            selectedDatabase = DatabaseNamesComboBox.SelectedValue.ToString();
         }
 
         private void Button_Import_Click(object sender, RoutedEventArgs e)
         {
+            DisplayDatabase(selectedDatabase);
+        }
 
-            // --- Load Table Names
-            List<string> tableNames = keeper.GetTableNames();
-            TableNamesComboBox.ItemsSource = tableNames;
-            // --- Select first table
-            if (tableNames.Count > 0)
+        private void Button_Export_Click(object sender, RoutedEventArgs e)
+        {
+            DataView dataView = (DataView)dataGrid.ItemsSource;
+            DataTable table = dataView.Table;
+            List<string> tableOutputData = new List<string>();
+
+            foreach (DataColumn column in table.Columns)
             {
-                TableNamesComboBox.SelectedIndex = 0;
-                //TABLE_NAME = tableNames[0];
+                // Write Column Name
+                Console.WriteLine(column.ColumnName);
+                tableOutputData.Add($"!{column.ColumnName}");
+                
+                // Write Column Data
+                int rowIndex = 0;
+                foreach (DataRow row in table.Rows)
+                {
+                    int currentColumnIndex = columnNames.IndexOf(column.ColumnName);
+                    string rowValue = row[currentColumnIndex].ToString();
+                    bool rowValueNotEmpty = true; // rowValue != null && rowValue.Length > 0;
+                    if (rowValueNotEmpty)
+                    {
+                        tableOutputData.Add($"{rowIndex}-{rowValue}");
+                        Console.WriteLine(rowValue);
+                    }
+                }
+            }
+            dataKeeper.UpdateTable($"{selectedTable}.TB", tableOutputData);
+        }
+
+        private void Button_CreateDatabase_Click(object sender, RoutedEventArgs e)
+        {
+            dataKeeper.CreateDatabase(DatabaseNameTextBox.Text, DATABASE_PATH);
+            ReloadDatabaseNames();
+        }
+
+        private void Button_CreateTable_Click(object sender, RoutedEventArgs e)
+        {
+            dataKeeper.CreateTable(TableNameTextBox.Text, new List<string>());
+            ReloadTableNames();
+        }
+
+        private void Button_AddColumn_Click(object sender, RoutedEventArgs e)
+        {
+            if (dataGrid.ItemsSource != null)
+            {
+                DataTable table = ((DataView)dataGrid.ItemsSource).Table;
+                string newColumnName = ColumnNameTextBox.Text;
+                table.Columns.Add(new DataColumn(newColumnName, typeof(string)));
+                dataGrid.ItemsSource = null;
+                dataGrid.Items.Refresh();
+                dataGrid.ItemsSource = table.DefaultView;
+                dataGrid.Items.Refresh();
+            }
+        }
+
+        // Returns the max item count out of each item list in the dictionary
+        private int MaxCount<T>(Dictionary<T, List<T>> dict)
+        {
+            int max = 0;
+            foreach (List<T> list in dict.Values)
+            {
+                if (list.Count > max)
+                {
+                    max = list.Count;
+                }
+            }
+            return max;
+        }
+
+        private void ReloadDatabaseNames()
+        {
+            DatabaseNamesComboBox.ItemsSource = dataKeeper.DatabasesList.Keys;
+            if (dataKeeper.DatabasesList.Keys.Count > 0)
+            {
+                DatabaseNamesComboBox.SelectedIndex = 0;
             }
 
+            //Console.WriteLine("Database names:");
+            //foreach (string item in keeper.DatabasesList.Keys)
+            //{
+            //    Console.WriteLine(item);
+            //}
+        }
+
+        private void DisplayDatabase(string DatabaseName)
+        {
+            // --- Load table names
+            ReloadTableNames();
+
             // --- Load column names
-            columnNames = keeper.GetColumnNames(TABLE_NAME);
+            columnNames = keeper.GetColumnNames(selectedTable);
 
             // --- Load data in a dict
             Dictionary<string, List<string>> columnData = new Dictionary<string, List<string>>();
             foreach (string columnName in columnNames)
             {
-                List<string> columnValues = dataKeeper.ReadColumn(TABLE_NAME, columnName);
+                List<string> columnValues = dataKeeper.ReadColumn(selectedTable, columnName);
                 columnData[columnName] = columnValues;
             }
 
@@ -85,88 +167,31 @@ namespace SimpleDatabase
             dataGrid.ItemsSource = dataTable.DefaultView;
         }
 
-        private void Button_Export_Click(object sender, RoutedEventArgs e)
-        {
-            DataView dataView = (DataView)dataGrid.ItemsSource;
-            DataTable table = dataView.Table;
-            List<string> tableOutputData = new List<string>();
 
-            foreach (DataColumn column in table.Columns)
+        private void ReloadTableNames()
+        {
+            // --- Load Table Names
+            List<string> tableNames = keeper.GetTableNames();
+            TableNamesComboBox.ItemsSource = tableNames;
+            // --- Select first table
+            if (tableNames.Count > 0 && TableNamesComboBox.SelectedIndex == -1)
             {
-                // Write Column Name
-                Console.WriteLine(column.ColumnName);
-                tableOutputData.Add($"!{column.ColumnName}");
-                
-                // Write Column Data
-                int rowIndex = 0;
-                foreach (DataRow row in table.Rows)
-                {
-                    int currentColumnIndex = columnNames.IndexOf(column.ColumnName);
-                    string rowValue = row[currentColumnIndex].ToString();
-                    bool rowValueNotEmpty = rowValue != null && rowValue.Length > 0;
-                    if (rowValueNotEmpty)
-                    {
-                        tableOutputData.Add($"{rowIndex}-{rowValue}");
-                        Console.WriteLine(rowValue);
-                    }
-                }
+                TableNamesComboBox.SelectedIndex = 0;
             }
-        }
-
-        private void Button_CreateDatabase_Click(object sender, RoutedEventArgs e)
-        {
-            dataKeeper.CreateDatabase(DatabaseNameTextBox.Text, DATABASE_PATH);
-            ReloadDatabaseNames();
-        }
-
-        private void Button_CreateTable_Click(object sender, RoutedEventArgs e)
-        {
-            dataKeeper.CreateDatabase(DatabaseNameTextBox.Text, DATABASE_PATH);
-            ReloadDatabaseNames();
-        }
-
-        private void Button_AddColumn_Click(object sender, RoutedEventArgs e)
-        {
-            if (dataGrid.ItemsSource != null)
-            {
-                DataTable table = ((DataView)dataGrid.ItemsSource).Table;
-                table.Columns.Add(new DataColumn("NewColumn", typeof(string)));
-                dataGrid.ItemsSource = table.DefaultView;
-            }
-        }
-
-        // Returns the max item count out of each item list in the dictionary
-        private int MaxCount<T>(Dictionary<T, List<T>> dict)
-        {
-            int max = 0;
-            foreach (List<T> list in dict.Values)
-            {
-                if (list.Count > max)
-                {
-                    max = list.Count;
-                }
-            }
-            return max;
-        }
-
-        private void ReloadDatabaseNames()
-        {
-            DatabaseNamesComboBox.ItemsSource = dataKeeper.DatabasesList.Keys;
-            if (dataKeeper.DatabasesList.Keys.Count > 0)
-            {
-                DatabaseNamesComboBox.SelectedIndex = 0;
-            }
-
-            Console.WriteLine("Database names:");
-            foreach (string item in keeper.DatabasesList.Keys)
-            {
-                Console.WriteLine(item);
-            }
+            selectedTable = tableNames[TableNamesComboBox.SelectedIndex];
+            selectedTable = selectedTable.Substring(0, selectedTable.Length - 3);
         }
 
         private void DatabaseNamesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            DATABASE_NAME = DatabaseNamesComboBox.SelectedValue.ToString();
+            selectedDatabase = DatabaseNamesComboBox.SelectedValue.ToString();
+            DisplayDatabase(selectedDatabase);
+        }
+
+        private void TableNamesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            selectedTable = TableNamesComboBox.SelectedValue.ToString();
+            DisplayDatabase(selectedDatabase);
         }
     }
 }
