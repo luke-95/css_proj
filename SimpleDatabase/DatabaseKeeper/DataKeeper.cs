@@ -5,10 +5,10 @@ namespace DatabaseKeeper
 {
     public class DataKeeper
     {
-        private Dictionary<string, string> DatabasesList;
-        private Dictionary<string, List<string>> DatabaseTables;
-        private string databaseName;
-        private IDatabaseKeeper keeper;
+        public Dictionary<string, string> DatabasesList;
+        public Dictionary<string, List<string>> DatabaseTables;
+        public string databaseName;
+        public IDatabaseKeeper keeper;
 
         public DataKeeper(IDatabaseKeeper keeper)
         {
