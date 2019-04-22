@@ -14,11 +14,12 @@ namespace DatabaseKeeper
         void RenameTable(string oldTableName, string newTableName);
         object ReadTable(string tableName);
         void AddColumns(string tableName, List<string> columnNames);
+        void DeleteColumn(string tableName, string columnName);
         void AddEntries(string tableName, string columnName, List<string> entriesList);
         List<string> ReadColumn(string tableName, string columnName);
         void UpdateEntry(string tableName, string columnName, int index, string newValue);
         void InsertEntries(string tableName, string columnName, int index, List<string> newEntries);
-
+        void DeleteEntries(string tableName, string columnName, int startIndex, int stopIndex);
         List<string> GetColumnNames(string tableName);
     }
 }

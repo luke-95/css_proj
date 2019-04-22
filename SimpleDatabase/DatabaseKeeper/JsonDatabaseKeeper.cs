@@ -101,6 +101,11 @@ namespace DatabaseKeeper
 
         }
 
+        public void DeleteColumn(string tableName, string columnName)
+        {
+            throw new NotImplementedException();
+        }
+
         public void AddEntries(string tableName, string columnName, List<string> entriesList)
         {
             var table = (JObject)ReadTable(tableName);
@@ -142,6 +147,11 @@ namespace DatabaseKeeper
         }
 
         public void InsertEntries(string tableName, string columnName, int index, List<string> newEntries)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteEntries(string tableName, string columnName, int startIndex, int stopIndex)
         {
             throw new NotImplementedException();
         }

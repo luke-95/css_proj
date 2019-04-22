@@ -34,8 +34,10 @@ namespace DatabaseKeeper
             //dk.AddEntries("MyFirstTable", "Col1", values);
             //dk.AddColumns("MyFirstTable", ncolumns);
             //dk.UpdateEntry("MyFirstTable","Col1",1,"c2");
-            dk.InsertEntries("MyFirstTable", "Col1",1,nvalues);
-            var columnEntries = dk.ReadColumn("MyFirstTable", "Col1");
+            //dk.InsertEntries("MyFirstTable", "Col1",1,nvalues);
+            //var columnEntries = dk.ReadColumn("MyFirstTable", "Col1");
+            //dk.DeleteColumn("MyFirstTable","Col1");
+            dk.DeleteEntries("MyFirstTable","Col1",2,3);
 
             //Importer.Importer importer= new Importer.Importer();
             //var parsedcsv = importer.ReadCsv(@"C:\scrap\AJsonDB\exampleCSV.csv");
