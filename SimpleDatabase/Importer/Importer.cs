@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Importer
 {
-    public class Importer
+    public class CsvImporter
     {
         public Dictionary<string,List<string>> ReadCsv(string path)
         {

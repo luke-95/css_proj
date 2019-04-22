@@ -39,7 +39,7 @@ namespace DatabaseKeeper
         {
             DatabasesList.Add(databaseName, path + $"\\{databaseName}\\");
 
-            DirectoryInfo directory = new DirectoryInfo(path + $"\\{databaseName}");
+            DirectoryInfo directory = new DirectoryInfo(Path.Combine(path, databaseName));
             FileInfo[] files = directory.GetFiles();
 
             DatabaseTables.Add(databaseName, new List<string>());
@@ -74,6 +74,7 @@ namespace DatabaseKeeper
         public void DeleteTable(string tableName)
         {
             keeper.DeleteTable(tableName);
+            this.DatabaseTables[databaseName].Remove(tableName+".TB");
         }
 
         public void AddColumns(string tableName, List<string> columnNames)

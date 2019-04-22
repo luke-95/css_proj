@@ -15,7 +15,7 @@
             <RowDefinition Height="30"></RowDefinition>
             <RowDefinition Height="30"></RowDefinition>
             <RowDefinition Height="3"></RowDefinition>
-            
+            <RowDefinition Height="30"></RowDefinition>
             <RowDefinition Height="30"></RowDefinition>
 
             <RowDefinition Height="*"></RowDefinition>
@@ -33,7 +33,9 @@
         
         <StackPanel Margin="10,0,11,0" Grid.Row="0" Grid.Column="1"
         Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" >
-            <Button Content="Import" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Center" Width="100" Click="Button_Import_Click"/>
+            <Button Content="Import DB" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Center" Width="100" Click="Button_ImportDB_Click"/>
+            <Button Content="Import CSV" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Center" Width="100" Click="Button_ImportCSV_Click"/>
+
             <Button Content="Export" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Center" Width="100" Click="Button_Export_Click"/>
         </StackPanel>
         
@@ -64,11 +66,13 @@
             <TextBox x:Name="ColumnNameTextBox" Width="140" Margin="0,0,10,0" IsManipulationEnabled="True" Text="&lt;ColumnName&gt;" TextAlignment="Center" VerticalAlignment="Center"/>
             <Button Content="Add Column" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Center" Width="100" Click="Button_AddColumn_Click"/>
         </StackPanel>
+        <!-- Row 5-->
+        <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" Margin="10,0" HorizontalAlignment="Right">
+            <Button Content="Delete Table" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Center" Width="100" Click="Button_DeleteTable_Click"/>
+        </StackPanel>
 
-
-
-        <!--Row 5-->
-        <DataGrid x:Name="dataGrid" Grid.Row="5" Grid.ColumnSpan="2"/>
+        <!--Row 6-->
+        <DataGrid x:Name="dataGrid" Grid.Row="6" Grid.ColumnSpan="2"/>
     </Grid>
 
 </Window>

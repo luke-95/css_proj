@@ -130,6 +130,7 @@ namespace DatabaseKeeper
             {
                 writer.WriteLine("!"+columnName);
             }
+            file.Close();
         }
 
         public List<string> ReadColumn(string tableName, string columnName)
