@@ -9,7 +9,7 @@ namespace DatabaseKeeper
 {
     class CLIParser
     {
-        private static List<string> operators = new List<string> { "==", "=", "<", ">", "<=", ">=", "!=", "<>"};
+        private static List<string> operators = new List<string> { "==", "=", "<", ">", "<=", ">=", "!=", "<>", "less", "lesseq", "greater", "greatereq"};
         private static List<string> actions = new List<string> { SELECT, DROP, CREATE, DELETE, IMPORT, EXPORT, HELP};
 
         //Actions
@@ -28,6 +28,12 @@ namespace DatabaseKeeper
         private const string FROM = "from";
         private const string WHERE = "where";
         private const string TABLE = "table";
+        private const string DATABASE = "database";
+
+
+        private static readonly string DATABASE_PATH = @"F:\FII\M1\2\CSS\Proiect\css_proj\Databases";
+        static string selectedDatabase = "NewDatabase";
+        static string selectedTable = "MyTable";
 
         public static void Main2(string[] args)
         {
@@ -41,7 +47,7 @@ namespace DatabaseKeeper
                 switch (action)
                 {
                     case SELECT:
-                        if (args.Length != 5)
+                        if (args.Length != 7)
                         {
                             printIncorrectNumberOfParametersError();
                             break;
@@ -94,19 +100,26 @@ namespace DatabaseKeeper
                             printIncorrectNumberOfParametersError();
                             break;
                         }
-                        else if(!args[1].Equals(TABLE))
+                        else if(!args[1].Equals(TABLE) && !args[1].Equals(DATABASE))
                         {
                             printUnexpectedParametersError();
                             break;
                         }
                         else
                         {
-                            List<String> columns = new List<string>();
-                            for(int i = 3; i < args.Length; i++)
+                            if (args[1].Equals(TABLE))
                             {
-                                columns.Add(args[i]);
+                                List<String> columns = new List<string>();
+                                for (int i = 3; i < args.Length; i++)
+                                {
+                                    columns.Add(args[i]);
+                                }
+                                createTable(args[2], columns);
                             }
-                            createTable(args[2], columns);
+                            if (args[1].Equals(DATABASE))
+                            {
+                                createDatabase(args[2]);
+                            }
                         }
                         break;
                     case IMPORT:
@@ -160,6 +173,21 @@ namespace DatabaseKeeper
         private static void selectEntries(string tableName, string columnName, string op, string value)
         {
             Console.WriteLine("Selecting stuff: " + tableName + " " + columnName + " " + op + " " + value);
+            TBDatabaseKeeper keeper = new TBDatabaseKeeper();
+            DataKeeper dk = new DataKeeper(keeper);
+            dk.LoadDatabase(selectedDatabase, DATABASE_PATH);
+            dk.SelectDatabase(selectedDatabase);
+
+            Dictionary<string, List<string>> result = dk.SelectData(tableName, op, value);
+            Console.WriteLine("Select result:\n");
+            foreach (KeyValuePair<string, List<string>> kvp in result)
+            {
+                Console.Write("\nKey = {0}, Values: ", kvp.Key);
+                foreach (string val in kvp.Value)
+                {
+                    Console.Write(val + " ");
+                }
+            }
         }
 
         private static void deleteEntries(string tableName, string columnName, string op, string value)
@@ -170,6 +198,10 @@ namespace DatabaseKeeper
         private static void dropTable(string table)
         {
             Console.WriteLine("Deleting table " + table);
+            TBDatabaseKeeper keeper = new TBDatabaseKeeper();
+            DataKeeper dk = new DataKeeper(keeper);
+
+            dk.DeleteTable(table);
         }
 
         private static void createTable(string table, List<String> columns)
@@ -177,6 +209,10 @@ namespace DatabaseKeeper
             Console.WriteLine("Creating table " + table);
             TBDatabaseKeeper keeper = new TBDatabaseKeeper();
             DataKeeper dk = new DataKeeper(keeper);
+
+            dk.LoadDatabase(selectedDatabase, DATABASE_PATH);
+            dk.SelectDatabase(selectedDatabase);
+
             dk.CreateTable(table, columns);
         }
 
@@ -188,6 +224,13 @@ namespace DatabaseKeeper
         private static void exportTable(string table, string csv)
         {
 
+        }
+
+        private static void createDatabase(string databaseName)
+        {
+            TBDatabaseKeeper keeper = new TBDatabaseKeeper();
+            DataKeeper dk = new DataKeeper(keeper);
+            dk.CreateDatabase(databaseName, DATABASE_PATH);
         }
         private static void listTable()
         {
