@@ -249,6 +249,58 @@ namespace DatabaseKeeper
             UpdateTable(tableName, table);
         }
 
+        public void DeleteColumn(string tableName, string columnName)
+        {
+            var table = (List<string>)ReadTable(tableName);
+            var tableIndex = table.IndexOf("!" + columnName);
+            table.RemoveAt(tableIndex);
+
+            while (tableIndex < table.Count && !table[tableIndex].StartsWith("!"))
+            {
+                table.RemoveAt(tableIndex);
+            }
+
+            tableName = tableName + ".TB";
+            UpdateTable(tableName, table);
+        }
+
+        public void DeleteEntries(string tableName, string columnName, int startIndex, int stopIndex)
+        {
+            if (stopIndex < startIndex)
+            {
+                return;
+            }
+
+            var table = (List<string>)ReadTable(tableName);
+            var tableIndex = table.IndexOf("!" + columnName);
+            tableIndex++;
+            int i = 0;
+
+            while (tableIndex < table.Count && !table[tableIndex].StartsWith("!") && startIndex<=stopIndex)
+            {
+                if (table[tableIndex].StartsWith(startIndex.ToString()))
+                {
+                    table.RemoveAt(tableIndex);
+                    startIndex++;
+                }
+                else
+                {
+                    tableIndex++;
+                    i++;
+                }
+            }
+
+            while (tableIndex < table.Count && !table[tableIndex].StartsWith("!"))
+            {
+                table[tableIndex] = i + "-" + table[tableIndex].Split(new char[] { '-' }, 2)[1];
+                i++;
+                tableIndex++;
+            }
+
+            tableName = tableName + ".TB";
+            UpdateTable(tableName, table);
+        }
+
         public List<string> GetColumnNames(string tableName)
         {
             List<string> table = (List<string>)ReadTable(tableName);

@@ -99,5 +99,15 @@ namespace DatabaseKeeper
         {
             keeper.InsertEntries(tableName,columnName,index, newEntries);
         }
+
+        public void DeleteEntries(string tableName, string columnName, int startIndex, int stopIndex)
+        {
+            keeper.DeleteEntries(tableName,columnName,startIndex,stopIndex);
+        }
+
+        public void DeleteColumn(string tableName, string columnName)
+        {
+            keeper.DeleteColumn(tableName,columnName);
+        }
     }
 }
