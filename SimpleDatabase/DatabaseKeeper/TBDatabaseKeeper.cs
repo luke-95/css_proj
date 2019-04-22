@@ -316,7 +316,7 @@ namespace DatabaseKeeper
 
         public List<string> GetTableNames()
         {
-            return DatabaseTables.Keys.ToList<string>();
+            return DatabaseTables[databaseName].ToList<string>();
         }
     }
 }
