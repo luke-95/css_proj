@@ -70,6 +70,7 @@ namespace DatabaseKeeper
                 writer.WriteLine(value);
             }
             writer.Flush();
+            file.Close();
         }
 
         public void DeleteTable(string tableName)
@@ -185,6 +186,67 @@ namespace DatabaseKeeper
                 index++;
             }
             UpdateTable(tableName,TBtable);
+        }
+
+        public void UpdateEntry(string tableName, string columnName, int index, string newValue)
+        {
+
+            var table = (List<string>)ReadTable(tableName);
+
+            var tableIndex = table.IndexOf("!" + columnName);
+            tableIndex++;
+
+            while (tableIndex<table.Count && !table[tableIndex].StartsWith("!"))
+            {
+                if (table[tableIndex].StartsWith(index.ToString()))
+                {
+                    table[tableIndex] = index.ToString() + "-" + newValue;
+                    break;
+                }
+
+                tableIndex++;
+            }
+
+            tableName = tableName + ".TB";
+            UpdateTable(tableName, table);
+        }
+
+        public void InsertEntries(string tableName, string columnName, int index, List<string> newEntries)
+        {
+
+            var table = (List<string>)ReadTable(tableName);
+
+            var tableIndex = table.IndexOf("!" + columnName);
+            tableIndex++;
+            int i = 0;
+
+            while (tableIndex < table.Count && !table[tableIndex].StartsWith("!"))
+            {
+                if (table[tableIndex].StartsWith(index.ToString()))
+                {
+                    break;
+                }
+
+                tableIndex++;
+                i++;
+            }
+
+            foreach (var entry in newEntries)
+            {
+                table.Insert(tableIndex, $"{i}-{entry}");
+                i++;
+                tableIndex++;
+            }
+
+            while (tableIndex < table.Count && !table[tableIndex].StartsWith("!"))
+            {
+                table[tableIndex] = i + "-" + table[tableIndex].Split(new char[] {'-'}, 2)[1];
+                i++;
+                tableIndex++;
+            }
+
+            tableName = tableName + ".TB";
+            UpdateTable(tableName, table);
         }
     }
 }

@@ -135,5 +135,15 @@ namespace DatabaseKeeper
         {
             throw new NotImplementedException();
         }
+
+        public void UpdateEntry(string tableName, string columnName, int index, string newValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InsertEntries(string tableName, string columnName, int index, List<string> newEntries)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
