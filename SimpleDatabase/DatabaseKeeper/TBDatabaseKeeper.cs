@@ -248,5 +248,18 @@ namespace DatabaseKeeper
             tableName = tableName + ".TB";
             UpdateTable(tableName, table);
         }
+
+        public List<string> GetColumnNames(string tableName)
+        {
+            List<string> table = (List<string>)ReadTable(tableName);
+            List<string> columns = new List<string>();
+            foreach (string line in table)
+            {
+                if (line.StartsWith("!")) {
+                    columns.Add(line.Substring(1));
+                }
+            }
+            return columns;
+        }
     }
 }

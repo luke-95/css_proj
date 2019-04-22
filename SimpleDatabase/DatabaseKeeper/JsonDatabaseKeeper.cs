@@ -145,5 +145,10 @@ namespace DatabaseKeeper
         {
             throw new NotImplementedException();
         }
+
+        public List<string> GetColumnNames(string tableName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

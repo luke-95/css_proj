@@ -96,5 +96,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DatabaseKeeper\DatabaseKeeper.csproj">
+      <Project>{2A96811A-8DF0-4E04-927B-3E3C79D6425D}</Project>
+      <Name>DatabaseKeeper</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
