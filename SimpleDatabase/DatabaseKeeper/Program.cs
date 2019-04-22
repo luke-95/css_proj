@@ -12,6 +12,7 @@ namespace DatabaseKeeper
     {
         static void Main(string[] args)
         {
+            CLIParser.Main2(args);
             //JsonDatabaseKeeper keeper= new JsonDatabaseKeeper();
             TBDatabaseKeeper keeper = new TBDatabaseKeeper();
             DataKeeper dk=new DataKeeper(keeper);

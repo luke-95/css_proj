@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CLIParser.cs" />
     <Compile Include="DataKeeper.cs" />
     <Compile Include="IDatabaseKeeper.cs" />
     <Compile Include="JsonDatabaseKeeper.cs" />
@@ -62,5 +63,6 @@
       <Name>Importer</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
