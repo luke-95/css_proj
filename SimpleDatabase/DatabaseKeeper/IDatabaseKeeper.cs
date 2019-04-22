@@ -16,5 +16,7 @@ namespace DatabaseKeeper
         void AddColumns(string tableName, List<string> columnNames);
         void AddEntries(string tableName, string columnName, List<string> entriesList);
         List<string> ReadColumn(string tableName, string columnName);
+        void UpdateEntry(string tableName, string columnName, int index, string newValue);
+        void InsertEntries(string tableName, string columnName, int index, List<string> newEntries);
     }
 }

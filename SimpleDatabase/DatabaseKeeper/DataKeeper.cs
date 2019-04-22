@@ -89,5 +89,15 @@ namespace DatabaseKeeper
         {
             return keeper.ReadColumn(tableName, columnName);
         }
+
+        public void UpdateEntry(string tableName, string columnName, int index, string newValue)
+        {
+            keeper.UpdateEntry(tableName,columnName,index, newValue);
+        }
+
+        public void InsertEntries(string tableName, string columnName, int index, List<string> newEntries)
+        {
+            keeper.InsertEntries(tableName,columnName,index, newEntries);
+        }
     }
 }
