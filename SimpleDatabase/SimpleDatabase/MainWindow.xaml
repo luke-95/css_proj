@@ -36,7 +36,7 @@
             <Button Content="Import DB" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Center" Width="100" Click="Button_ImportDB_Click"/>
             <Button Content="Import CSV" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Center" Width="100" Click="Button_ImportCSV_Click"/>
 
-            <Button Content="Export" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Center" Width="100" Click="Button_Export_Click"/>
+            <Button Content="Save" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Center" Width="100" Click="Button_Save_Click"/>
         </StackPanel>
         
         <!--Row 1-->

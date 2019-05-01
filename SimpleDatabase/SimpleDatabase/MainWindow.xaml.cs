@@ -1,6 +1,5 @@
 ﻿using DatabaseKeeper;
 using Microsoft.Win32;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Windows;
@@ -8,6 +7,8 @@ using System.Windows.Controls;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.IO;
 using Importer;
+using SimpleDatabase.Controllers;
+using SimpleDatabase.Models;
 
 namespace SimpleDatabase
 {
@@ -16,51 +17,87 @@ namespace SimpleDatabase
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly string DATABASES_PATH = @"D:\Facultate\Master_1\CSSoft\databases";
+        DatabaseController databaseController;
 
-        string selectedDatabase = "NewJsonDB";
-        string selectedTable = "SomeTable";
+        private TableModel SelectedTable => databaseController.ImportedDatabaseModel.GetTable(SelectedTableName);
+        private string SelectedTableName => TableNamesComboBox.SelectedValue.ToString();
 
-        TBDatabaseKeeper keeper;
-        DataKeeper dataKeeper;
+        private SimpleDatabaseModel SelectedDatabase => databaseController.ImportedDatabaseModel;
+        private string SelectedDatabaseName => DatabaseNamesComboBox.SelectedValue.ToString();
 
-        List<string> columnNames;
+        private bool databaseImportInProgress = false;
+        private bool databaseCreationInProgress = false;
 
         public MainWindow()
         {
             InitializeComponent();
-            keeper = new TBDatabaseKeeper();
-            dataKeeper = new DataKeeper(keeper);
 
-            // --- Load Database Names
-            dataKeeper.LoadDatabase(selectedDatabase, DATABASES_PATH);
-            dataKeeper.SelectDatabase(selectedDatabase);
-
-            ReloadDatabaseNames();
-            ReloadTableNames();
-            selectedDatabase = DatabaseNamesComboBox.SelectedValue.ToString();
+            TBDatabaseKeeper tbKeeper = new TBDatabaseKeeper();
+            DataKeeper dataKeeper = new DataKeeper(tbKeeper);
+            InitializeController(tbKeeper, dataKeeper);
         }
 
+        public void InitializeController(IDatabaseKeeper tbKeeper, DataKeeper dataKeeper)
+        {
+            databaseController = new DatabaseController(tbKeeper, dataKeeper);
+        }
+
+        public void DisplayTable(TableModel tableModel)
+        {
+            // --- Prepare Data to be displayed in a DataGrid
+            // Create DataTable
+            DataTable dataTable = new DataTable();
+            // Create DataColumns
+            foreach (string columnName in tableModel.ColumnNames)
+            {
+                DataColumn dataColumn = new DataColumn(columnName, typeof(string));
+                dataTable.Columns.Add(dataColumn);
+            }
+            // Create DataRows
+            for (int rowIndex = 0; rowIndex < tableModel.RowCount; ++rowIndex)
+            {
+                DataRow row = dataTable.NewRow();
+                for (int columnIndex = 0; columnIndex < tableModel.ColumnNames.Count; ++columnIndex)
+                {
+                    string currentColumn = tableModel.ColumnNames[columnIndex];
+                    if (rowIndex < tableModel.Columns[currentColumn].Count)
+                    {
+                        row[columnIndex] = tableModel.Columns[currentColumn][rowIndex];
+                    }
+                }
+                dataTable.Rows.Add(row);
+            }
+            // --- Display in DataGrid
+            dataGrid.ItemsSource = dataTable.DefaultView;
+        }
 
         private void Button_ImportDB_Click(object sender, RoutedEventArgs e)
         {
+            databaseImportInProgress = true;
             CommonOpenFileDialog dialog = new CommonOpenFileDialog
             {
-                InitialDirectory = DATABASES_PATH,
+                InitialDirectory = DatabaseController.DEFAULT_DATABASE_PATH,
                 IsFolderPicker = true
             };
 
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                string selectedPath = dialog.FileName;
-                selectedDatabase = Path.GetFileName(dialog.FileName);
+                string selectionPath = Path.GetDirectoryName(dialog.FileName);
+                string selectedDatabase = Path.GetFileName(dialog.FileName);
 
-                dataKeeper.LoadDatabase(selectedDatabase, DATABASES_PATH);
-                dataKeeper.SelectDatabase(selectedDatabase);
+                databaseController.LoadDatabase(selectedDatabase, selectionPath);
+
+                ReloadDatabaseNames();
                 ReloadTableNames();
-                DisplayDatabase();
-                Console.WriteLine($"SelectedDB: {selectedDatabase}");
+                
+                //Console.WriteLine($"SelectedDB: {selectedDatabase}");
+                // Display first table in the database, if one exists
+                if (databaseController.GetTableNames(selectedDatabase).Count > 0)
+                {
+                    DisplayTable(databaseController.ImportedDatabaseModel.Tables[0]);
+                }
             }
+            databaseImportInProgress = false;
         }
 
         private void Button_ImportCSV_Click(object sender, RoutedEventArgs e)
@@ -72,62 +109,68 @@ namespace SimpleDatabase
             {
                 CsvImporter csvIMporter = new CsvImporter();
                 Dictionary<string, List<string>> import = csvIMporter.ReadCsv(openFileDialog.FileName);
-                
-
-                List<string> tableOutputData = new List<string>();
+                string tableName = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
 
                 var columns = new List<string>();
                 foreach (string column in import.Keys)
                 {
                     columns.Add(column);
-                    
-                }
-                string tableName = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
-                dataKeeper.CreateTable(tableName, columns);
-                selectedTable = tableName;
-                foreach (var column in columns)
-                {
-                    dataKeeper.AddEntries(selectedTable, column, import[column]);
                 }
 
-                DisplayDatabase();
+                databaseController.CreateEmptyTable(tableName, columns);
+                ReloadTableNames();
+                TableNamesComboBox.SelectedIndex = TableNamesComboBox.Items.IndexOf(tableName);
+                databaseController.AddEntries(SelectedTableName, import);
+                DisplayTable(databaseController.ImportedDatabaseModel.GetTable(SelectedTableName));
             }
         }
 
-        private void Button_Export_Click(object sender, RoutedEventArgs e)
+        private void Button_Save_Click(object sender, RoutedEventArgs e)
         {
             DataView dataView = (DataView)dataGrid.ItemsSource;
-            DataTable table = dataView.Table;
+            DataTable dataTable = dataView.Table;
             List<string> tableOutputData = new List<string>();
 
-            foreach (DataColumn column in table.Columns)
+            foreach (DataColumn column in dataTable.Columns)
             {
                 // Write Column Name
-                //Console.WriteLine(column.ColumnName);
                 tableOutputData.Add($"!{column.ColumnName}");
-                
                 // Write Column Data
                 int rowIndex = 0;
-                foreach (DataRow row in table.Rows)
+                foreach (DataRow row in dataTable.Rows)
                 {
-                    int currentColumnIndex = columnNames.IndexOf(column.ColumnName);
+                    int currentColumnIndex = SelectedTable.ColumnNames.IndexOf(column.ColumnName);
                     string rowValue = row[currentColumnIndex].ToString();
                     tableOutputData.Add($"{rowIndex}-{rowValue}");
-                    //Console.WriteLine(rowValue);
+                    rowIndex += 1;
                 }
             }
-            dataKeeper.UpdateTable($"{selectedTable}.TB", tableOutputData);
+            // Save to disk
+            databaseController.SaveTable(SelectedTableName, tableOutputData);
         }
 
         private void Button_CreateDatabase_Click(object sender, RoutedEventArgs e)
         {
-            dataKeeper.CreateDatabase(DatabaseNameTextBox.Text, DATABASES_PATH);
-            ReloadDatabaseNames();
+            databaseCreationInProgress = true;
+
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog
+            {
+                InitialDirectory = DatabaseController.DEFAULT_DATABASE_PATH,
+                IsFolderPicker = true
+            };
+
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                databaseController.CreateDatabase(DatabaseNameTextBox.Text, dialog.FileName);
+                ReloadDatabaseNames();
+            }
+            databaseCreationInProgress = false;
+
         }
 
         private void Button_CreateTable_Click(object sender, RoutedEventArgs e)
         {
-            dataKeeper.CreateTable(TableNameTextBox.Text, new List<string>());
+            databaseController.CreateEmptyTable(TableNameTextBox.Text, new List<string>());
             ReloadTableNames();
         }
 
@@ -137,113 +180,64 @@ namespace SimpleDatabase
             {
                 DataTable table = ((DataView)dataGrid.ItemsSource).Table;
                 string newColumnName = ColumnNameTextBox.Text;
-                table.Columns.Add(new DataColumn(newColumnName, typeof(string)));
-                columnNames.Add(newColumnName);
-
-                dataGrid.ItemsSource = null;
-                dataGrid.Items.Refresh();
-                dataGrid.ItemsSource = table.DefaultView;
-                dataGrid.Items.Refresh();
-
-                
-            }
-        }
-
-        // Returns the max item count out of each item list in the dictionary
-        private int MaxCount<T>(Dictionary<T, List<T>> dict)
-        {
-            int max = 0;
-            foreach (List<T> list in dict.Values)
-            {
-                if (list.Count > max)
+                if (!table.Columns.Contains(newColumnName))
                 {
-                    max = list.Count;
+                    table.Columns.Add(new DataColumn(newColumnName, typeof(string)));
+                    databaseController.ImportedDatabaseModel.GetTable(SelectedTableName).AddColumn(newColumnName, new List<string>());
+
+                    dataGrid.ItemsSource = null;
+                    dataGrid.Items.Refresh();
+                    dataGrid.ItemsSource = table.DefaultView;
+                    dataGrid.Items.Refresh();
+                }
+                else
+                {
+                    MessageBox.Show("Column name already exists.", "", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
-            return max;
         }
 
-        private void ReloadDatabaseNames()
+        public void SetComboBoxItems(ComboBox comboBox, List<string> ItemsSource)
         {
-            DatabaseNamesComboBox.ItemsSource = dataKeeper.DatabasesList.Keys;
-            if (dataKeeper.DatabasesList.Keys.Count > 0)
+            if (ItemsSource.Count > 0)
             {
-                DatabaseNamesComboBox.SelectedIndex = 0;
-            }
-            // Print to console
-            //Console.WriteLine("Database names:");
-            //foreach (string item in keeper.DatabasesList.Keys)
-            //{
-            //    Console.WriteLine(item);
-            //}
-        }
+                // Force ItemSource reload.
+                comboBox.ItemsSource = null;
+                // Set ItemsSource
+                comboBox.ItemsSource = ItemsSource;
 
-        private void DisplayDatabase()
-        {
-            // --- Load column names
-            columnNames = keeper.GetColumnNames(selectedTable);
-
-            // --- Load data in a dict
-            Dictionary<string, List<string>> columnData = new Dictionary<string, List<string>>();
-            foreach (string columnName in columnNames)
-            {
-                List<string> columnValues = dataKeeper.ReadColumn(selectedTable, columnName);
-                columnData[columnName] = columnValues;
-            }
-
-            // --- Prepare Data to be displayed in a DataGrid
-            DataTable dataTable = new DataTable();
-            /// Init Columns
-            foreach (string columnName in columnNames)
-            {
-                DataColumn dataColumn = new DataColumn(columnName, typeof(string));
-                dataTable.Columns.Add(dataColumn);
-            }
-            /// Populate Rows
-            int rowCount = MaxCount(columnData);
-            for (int rowIndex = 0; rowIndex < rowCount; ++rowIndex)
-            {
-                DataRow row = dataTable.NewRow();
-                for (int columnIndex = 0; columnIndex < columnData.Keys.Count; ++columnIndex)
+                //If no item is selected, select first item.
+                if (comboBox.SelectedValue == null)
                 {
-                    string currentColumn = columnNames[columnIndex];
-                    if (rowIndex < columnData[currentColumn].Count)
-                    {
-                        row[columnIndex] = columnData[currentColumn][rowIndex];
-                    }
+                    comboBox.SelectedIndex = 0;
                 }
-                dataTable.Rows.Add(row);
             }
-            // --- Display in DataGrid
-            dataGrid.ItemsSource = dataTable.DefaultView;
         }
 
-
-        private void ReloadTableNames()
+        public void ReloadTableNames()
         {
-            // --- Load Table Names
-            List<string> tableNames = dataKeeper.DatabaseTables[selectedDatabase];
-            TableNamesComboBox.ItemsSource = null;
-            TableNamesComboBox.ItemsSource = tableNames;
-            // --- Select first table
-            if (tableNames.Count > 0 && TableNamesComboBox.SelectedIndex == -1)
-            {
-                TableNamesComboBox.SelectedIndex = 0;
-                selectedTable = tableNames[TableNamesComboBox.SelectedIndex];
-                selectedTable = selectedTable.Substring(0, selectedTable.Length - 3);
-            }
-            else
-            {
-                selectedTable = null;
-            }
+            SetComboBoxItems(TableNamesComboBox, databaseController.GetTableNames(SelectedDatabaseName));
         }
+
+        public void ReloadDatabaseNames()
+        {
+            SetComboBoxItems(DatabaseNamesComboBox, databaseController.GetDatabaseNames());
+        }
+
 
         private void DatabaseNamesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (DatabaseNamesComboBox.SelectedValue != null)
             {
-                selectedDatabase = DatabaseNamesComboBox.SelectedValue.ToString();
-                DisplayDatabase();
+                if (!databaseImportInProgress && !databaseCreationInProgress)
+                {
+                    databaseController.LoadDatabase(SelectedDatabaseName);
+                }
+
+                if (SelectedDatabase.TableNames.Count > 0)
+                {
+                    DisplayTable(SelectedDatabase.Tables[0]);
+                }
             }
         }
 
@@ -251,15 +245,19 @@ namespace SimpleDatabase
         {
             if (TableNamesComboBox.SelectedValue != null)
             {
-                selectedTable = TableNamesComboBox.SelectedValue.ToString().Split('.')[0];
-                DisplayDatabase();
+                DisplayTable(SelectedTable);
             }
         }
 
         private void Button_DeleteTable_Click(object sender, RoutedEventArgs e)
         {
-            dataKeeper.DeleteTable(selectedTable);
+            databaseController.DeleteTable(SelectedTableName);
+
             ReloadTableNames();
+            if (SelectedDatabase.TableNames.Count > 0)
+            {
+                TableNamesComboBox.SelectedIndex = 0;
+            }
         }
     }
 }

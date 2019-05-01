@@ -169,5 +169,10 @@ namespace DatabaseKeeper
             }
             return columnData;
         }
+
+        public List<string> GetTableNames()
+        {
+            return keeper.GetTableNames();
+        }
     }
 }
