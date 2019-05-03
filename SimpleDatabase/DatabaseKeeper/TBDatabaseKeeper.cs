@@ -75,18 +75,24 @@ namespace DatabaseKeeper
 
         public void DeleteTable(string tableName)
         {
-            tableName = tableName + ".TB";
-            if (!DatabasesList.ContainsKey(databaseName))
-                throw new Exception("Database Not Loaded!");
-            if (!DatabaseTables[databaseName].Contains(tableName))
-                throw new Exception("Table dose not exist!");
+            tableName = VerifyTableExistance(tableName);
 
             var path = DatabasesList[databaseName] + tableName;
 
             File.Delete(path);
         }
 
-        public object ReadTable(string tableName)
+        public string VerifyTableExistance(string tableName)
+        {
+            tableName = tableName + ".TB";
+            if (!DatabasesList.ContainsKey(databaseName))
+                throw new Exception("Database Not Loaded!");
+            if (!DatabaseTables[databaseName].Contains(tableName))
+                throw new Exception("Table dose not exist!");
+            return tableName;
+        }
+
+        public virtual object ReadTable(string tableName)
         {
             tableName = tableName + ".TB";
             var path = DatabasesList[databaseName] + tableName;
@@ -152,12 +158,7 @@ namespace DatabaseKeeper
 
         public void AddEntries(string tableName, string columnName, List<string> entriesList)
         {
-            tableName = tableName + ".TB";
-
-            if (!DatabasesList.ContainsKey(databaseName))
-                throw new Exception("Database Not Loaded!");
-            if (!DatabaseTables[databaseName].Contains(tableName))
-                throw new Exception("Table dose not exist!");
+            tableName = VerifyTableExistance(tableName);
 
             var path = DatabasesList[databaseName] + tableName;
             var file = File.Open(path, FileMode.Open, FileAccess.ReadWrite);
