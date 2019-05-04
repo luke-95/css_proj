@@ -195,6 +195,22 @@ namespace SimpleDatabase
                     MessageBox.Show("Column name already exists.", "", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
+            return max;
+        }
+
+        private void ReloadDatabaseNames()
+        {
+            DatabaseNamesComboBox.ItemsSource = dataKeeper.DatabasesDict.Keys;
+            if (dataKeeper.DatabasesDict.Keys.Count > 0)
+            {
+                DatabaseNamesComboBox.SelectedIndex = 0;
+            }
+            // Print to console
+            //Console.WriteLine("Database names:");
+            //foreach (string item in keeper.DatabasesList.Keys)
+            //{
+            //    Console.WriteLine(item);
+            //}
         }
 
         public void SetComboBoxItems(ComboBox comboBox, List<string> ItemsSource)

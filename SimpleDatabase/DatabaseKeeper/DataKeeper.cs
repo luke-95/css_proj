@@ -5,14 +5,14 @@ namespace DatabaseKeeper
 {
     public class DataKeeper
     {
-        public Dictionary<string, string> DatabasesList;
+        public Dictionary<string, string> DatabasesDict;
         public Dictionary<string, List<string>> DatabaseTables;
         public string databaseName;
         public IDatabaseKeeper keeper;
 
         public DataKeeper(IDatabaseKeeper keeper)
         {
-            DatabasesList = new Dictionary<string, string>();
+            DatabasesDict = new Dictionary<string, string>();
             DatabaseTables = new Dictionary<string, List<string>>();
             this.keeper = keeper;
         }
@@ -22,7 +22,6 @@ namespace DatabaseKeeper
             this.databaseName = databaseName;
             FileInfo file = new FileInfo(path + $"\\{databaseName}\\{databaseName}.txt");
             file.Directory.Create();
-            DatabasesList.Add(databaseName, path + $"\\{databaseName}\\");
         }
 
         // Dangerous Method !UNTESTED!
@@ -37,23 +36,25 @@ namespace DatabaseKeeper
 
         public void LoadDatabase(string databaseName, string path)
         {
-            DatabasesList.Add(databaseName, path + $"\\{databaseName}\\");
+            DatabasesDict.Add(databaseName, path + $"\\{databaseName}\\");
 
             DirectoryInfo directory = new DirectoryInfo(Path.Combine(path, databaseName));
             FileInfo[] files = directory.GetFiles();
 
             DatabaseTables.Add(databaseName, new List<string>());
-            foreach (var table in files)
+            foreach (var file in files)
             {
-                DatabaseTables[databaseName].Add(table.Name);
+                if (file.Name.EndsWith(".TB"))
+                {
+                    DatabaseTables[databaseName].Add(file.Name);
+                }
             }
-
         }
 
         public void SelectDatabase(string databaseName)
         {
             this.databaseName = databaseName;
-            keeper.SetDatabase(DatabaseTables, DatabasesList, databaseName);
+            keeper.SetDatabase(DatabaseTables, DatabasesDict, databaseName);
         }
 
         public object ReadTable(string tableName)
