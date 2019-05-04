@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DatabaseKeeper
 {
-    class CLIParser
+    public class CLIParser
     {
         private static List<string> operators = new List<string> { "==", "=", "<", ">", "<=", ">=", "!=", "<>", "less", "lesseq", "greater", "greatereq"};
         private static List<string> actions = new List<string> { SELECT, DROP, CREATE, DELETE, IMPORT, EXPORT, HELP};
@@ -170,7 +170,7 @@ namespace DatabaseKeeper
             Console.ReadLine();
         }
 
-        private static void selectEntries(string tableName, string columnName, string op, string value)
+        public static void selectEntries(string tableName, string columnName, string op, string value)
         {
             Console.WriteLine("Selecting stuff: " + tableName + " " + columnName + " " + op + " " + value);
             TBDatabaseKeeper keeper = new TBDatabaseKeeper();
@@ -190,12 +190,12 @@ namespace DatabaseKeeper
             }
         }
 
-        private static void deleteEntries(string tableName, string columnName, string op, string value)
+        public static void deleteEntries(string tableName, string columnName, string op, string value)
         {
             Console.WriteLine("Deleting stuff" + tableName + " " + columnName + " " + op + " " + value);
         }
-       
-        private static void dropTable(string table)
+
+        public static void dropTable(string table)
         {
             Console.WriteLine("Deleting table " + table);
             TBDatabaseKeeper keeper = new TBDatabaseKeeper();
@@ -204,7 +204,7 @@ namespace DatabaseKeeper
             dk.DeleteTable(table);
         }
 
-        private static void createTable(string table, List<String> columns)
+        public static void createTable(string table, List<String> columns)
         {
             Console.WriteLine("Creating table " + table);
             TBDatabaseKeeper keeper = new TBDatabaseKeeper();
@@ -216,54 +216,54 @@ namespace DatabaseKeeper
             dk.CreateTable(table, columns);
         }
 
-        private static void importTable(string table, string csv)
+        public static void importTable(string table, string csv)
         {
 
         }
 
-        private static void exportTable(string table, string csv)
+        public static void exportTable(string table, string csv)
         {
 
         }
 
-        private static void createDatabase(string databaseName)
+        public static void createDatabase(string databaseName)
         {
             TBDatabaseKeeper keeper = new TBDatabaseKeeper();
             DataKeeper dk = new DataKeeper(keeper);
             dk.CreateDatabase(databaseName, DATABASE_PATH);
         }
-        private static void listTable()
+        public static void listTable()
         {
             Console.WriteLine("Listing table");
         }
 
         //Error messages
-        private static void printIncorrectNumberOfParametersError()
+        public static void printIncorrectNumberOfParametersError()
         {
             Console.WriteLine("Incorrent number of parameters!\nType \"help\" for support.");
             Console.ReadLine();
         }
 
-        private static void printImportExportFileTypeNotSupportedError()
+        public static void printImportExportFileTypeNotSupportedError()
         {
             Console.WriteLine("Import/Export file type not supported! Only .csv accepted");
             Console.ReadLine();
         }
 
-        private static void printUnexpectedParametersError()
+        public static void printUnexpectedParametersError()
         {
             Console.WriteLine("Unexpected parametes found!\nType \"help\" for support.");
             Console.ReadLine();
         }
 
-        private static void printActionNotSupportedError(string action)
+        public static void printActionNotSupportedError(string action)
         {
             Console.WriteLine("Action " + action + " not supported!\nType \"help\" for support.");
             Console.ReadLine();
         }
 
         //Read file utils
-        private static void readHelpMessage()
+        public static void readHelpMessage()
         {
             {
                 string text = System.IO.File.ReadAllText("HelpFile.txt");
