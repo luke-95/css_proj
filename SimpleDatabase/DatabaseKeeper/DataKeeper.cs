@@ -37,15 +37,18 @@ namespace DatabaseKeeper
 
         public void LoadDatabase(string databaseName, string path)
         {
-            DatabasesList.Add(databaseName, path + $"\\{databaseName}\\");
-
-            DirectoryInfo directory = new DirectoryInfo(Path.Combine(path, databaseName));
-            FileInfo[] files = directory.GetFiles();
-
-            DatabaseTables.Add(databaseName, new List<string>());
-            foreach (var table in files)
+            if (!DatabasesList.ContainsKey(databaseName))
             {
-                DatabaseTables[databaseName].Add(table.Name);
+                DatabasesList.Add(databaseName, path + $"\\{databaseName}\\");
+
+                DirectoryInfo directory = new DirectoryInfo(Path.Combine(path, databaseName));
+                FileInfo[] files = directory.GetFiles();
+
+                DatabaseTables.Add(databaseName, new List<string>());
+                foreach (var table in files)
+                {
+                    DatabaseTables[databaseName].Add(table.Name);
+                }
             }
 
         }
