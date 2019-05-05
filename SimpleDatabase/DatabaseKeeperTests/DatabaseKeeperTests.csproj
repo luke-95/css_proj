@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DatabaseKeeperTests</RootNamespace>
     <AssemblyName>DatabaseKeeperTests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -58,13 +58,17 @@
     <Reference Include="nunit.framework, Version=3.11.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.11.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -76,7 +80,9 @@
   </Choose>
   <ItemGroup>
     <Compile Include="CLIParserTests.cs" />
+    <Compile Include="Controllers\DatabaseControllerTests.cs" />
     <Compile Include="DataKeeperTests.cs" />
+    <Compile Include="MainWindowTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -89,6 +95,10 @@
     <ProjectReference Include="..\DatabaseKeeper\DatabaseKeeper.csproj">
       <Project>{2A96811A-8DF0-4E04-927B-3E3C79D6425D}</Project>
       <Name>DatabaseKeeper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SimpleDatabase\SimpleDatabase.csproj">
+      <Project>{9C0BE34B-A806-489B-8F5A-29042E648F53}</Project>
+      <Name>SimpleDatabase</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

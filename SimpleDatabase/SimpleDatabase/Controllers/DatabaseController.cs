@@ -25,7 +25,7 @@ namespace SimpleDatabase.Controllers
         public void CreateDatabase(string DatabaseName, string DatabasePath = DEFAULT_DATABASE_PATH)
         {
             dataKeeper.CreateDatabase(DatabaseName, DatabasePath);
-            dataKeeper.DatabasesList.Remove(DatabaseName);
+            //dataKeeper.DatabasesList.Remove(DatabaseName);
             LoadDatabase(DatabaseName, DatabasePath);
         }
 

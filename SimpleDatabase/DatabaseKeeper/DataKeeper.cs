@@ -35,7 +35,7 @@ namespace DatabaseKeeper
             databaseName = "";
         }*/
 
-        public void LoadDatabase(string databaseName, string path)
+        public virtual void LoadDatabase(string databaseName, string path)
         {
             if (!DatabasesList.ContainsKey(databaseName))
             {
