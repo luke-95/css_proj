@@ -10,7 +10,7 @@ namespace DatabaseKeeper
     public class CLIParser
     {
         private static List<string> operators = new List<string> { "==", "=", "<", ">", "<=", ">=", "!=", "<>", "less", "lesseq", "greater", "greatereq"};
-        private static List<string> actions = new List<string> { SELECT, DROP, CREATE, DELETE, IMPORT, EXPORT, HELP};
+        private static List<string> actions = new List<string> { SELECT, DROP, CREATE, DELETE, IMPORT, EXPORT, HELP, LIST};
 
         private DataKeeper dk;
 
@@ -23,6 +23,7 @@ namespace DatabaseKeeper
 
         private const string IMPORT = "import";
         private const string EXPORT = "export";
+        private const string LIST = "list";
 
         private const string HELP = "help";
 
@@ -30,6 +31,7 @@ namespace DatabaseKeeper
         private const string FROM = "from";
         private const string WHERE = "where";
         private const string TABLE = "table";
+        private const string TABLES = "tables";
         private const string DATABASE = "database";
 
 
@@ -79,19 +81,19 @@ namespace DatabaseKeeper
                         }
                         break;
                     case DELETE:
-                        if (args.Length != 5)
+                        if (args.Length != 6)
                         {
                             printIncorrectNumberOfParametersError();
                             break;
                         }
-                        else if (!args[1].Equals(FROM) || !args[3].Equals(WHERE) || !operators.Contains(args[5]))
+                        else if (!args[1].Equals(FROM))
                         {
                             printUnexpectedParametersError();
                             break;
                         }
                         else
                         {
-                            deleteEntries(args[2], args[4], args[5], args[6]);
+                            deleteEntries(args[2], args[3], args[4], args[5]);
                         }
                         break;
                     case DROP:
@@ -170,6 +172,14 @@ namespace DatabaseKeeper
                             exportTable(args[1], args[2]);
                         }
                         break;
+                    case LIST:
+                        if (args.Length > 2)
+                        {
+                            printIncorrectNumberOfParametersError();
+                            break;
+                        }
+                        listTables();
+                        break;
                     case HELP:
                         if (args.Length > 1)
                         {
@@ -188,26 +198,26 @@ namespace DatabaseKeeper
         public void selectEntries(string tableName, string columnName, string op, string value)
         {
             Console.WriteLine("Selecting stuff: " + tableName + " " + columnName + " " + op + " " + value);
-            TBDatabaseKeeper keeper = new TBDatabaseKeeper();
-            DataKeeper dk = new DataKeeper(keeper);
             dk.LoadDatabase(selectedDatabase, DATABASE_PATH);
             dk.SelectDatabase(selectedDatabase);
 
             Dictionary<string, List<string>> result = dk.SelectData(tableName, op, value);
             Console.WriteLine("Select result:\n");
-            foreach (KeyValuePair<string, List<string>> kvp in result)
-            {
-                Console.Write("\nKey = {0}, Values: ", kvp.Key);
-                foreach (string val in kvp.Value)
+            if(result != null)
+                foreach (KeyValuePair<string, List<string>> kvp in result)
                 {
-                    Console.Write(val + " ");
+                    Console.Write("\nKey = {0}, Values: ", kvp.Key);
+                    foreach (string val in kvp.Value)
+                    {
+                        Console.Write(val + " ");
+                    }
                 }
-            }
         }
 
-        public void deleteEntries(string tableName, string columnName, string op, string value)
+        public void deleteEntries(string tableName, string columnName, string start, string end)
         {
-            Console.WriteLine("Deleting stuff" + tableName + " " + columnName + " " + op + " " + value);
+            Console.WriteLine("Deleting stuff" + tableName + " " + columnName + " " + start + " " + end);
+            dk.DeleteEntries(tableName, columnName, Int32.Parse(start), Int32.Parse(end));
         }
 
         public void dropTable(string table)
@@ -241,9 +251,17 @@ namespace DatabaseKeeper
         {
             dk.CreateDatabase(databaseName, DATABASE_PATH);
         }
-        public void listTable()
+        public void listTables()
         {
             Console.WriteLine("Listing table");
+            List<String> tables = dk.GetTableNames();
+            if (tables != null)
+            {
+                foreach (string name in tables)
+                {
+                    Console.WriteLine(name);
+                }
+            }
         }
 
         //Error messages

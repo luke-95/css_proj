@@ -40,26 +40,36 @@ namespace DatabaseKeeper.Tests
 
             mockedDBKeeper.Setup(mq => mq.ReadTable(tableName)).Returns(table);
             mockedDBKeeper.Object.SetDatabase(databaseTables, databasesList, dbName);
-
-
-        }
-
-        [TestMethod()]
-        public void Main2Test()
-        {
-            Assert.Fail();
         }
 
         [TestMethod()]
         public void selectEntriesTest()
         {
-            Assert.Fail();
+            string tableName = "tableName";
+            TBDatabaseKeeper keeper = new Mock<TBDatabaseKeeper>().Object;
+            Mock<DataKeeper> dkMock = new Mock<DataKeeper>(keeper);
+            dkMock.Setup(mock => mock.SelectData(tableName, ">", "10"));
+
+            string[] args = new string[] { "select", "from", tableName, "where", "column", ">", "10" };
+            CLIParser cLIParser = new CLIParser(dkMock.Object);
+            cLIParser.parseArguments(args);
+
+            dkMock.Verify(mock => mock.SelectData(tableName, ">", "10"), Times.Once());
         }
 
         [TestMethod()]
         public void deleteEntriesTest()
         {
-            Assert.Fail();
+            string tableName = "tableName";
+            TBDatabaseKeeper keeper = new Mock<TBDatabaseKeeper>().Object;
+            Mock<DataKeeper> dkMock = new Mock<DataKeeper>(keeper);
+            dkMock.Setup(mock => mock.DeleteEntries(tableName, "column", 1, 3));
+
+            string[] args = new string[] { "delete", "from", tableName, "column", "1", "3" };
+            CLIParser cLIParser = new CLIParser(dkMock.Object);
+            cLIParser.parseArguments(args);
+
+            dkMock.Verify(mock => mock.DeleteEntries(tableName, "column", 1, 3), Times.Once());
         }
 
         [TestMethod()]
@@ -93,19 +103,6 @@ namespace DatabaseKeeper.Tests
         }
 
         [TestMethod()]
-        public void importTableTest()
-        {
-
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void exportTableTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
         public void createDatabaseTest()
         {
             string databaseName = "databaseName";
@@ -123,31 +120,16 @@ namespace DatabaseKeeper.Tests
         [TestMethod()]
         public void listTableTest()
         {
-            Assert.Fail();
-        }
+            string databaseName = "databaseName";
+            TBDatabaseKeeper keeper = new Mock<TBDatabaseKeeper>().Object;
+            Mock<DataKeeper> dkMock = new Mock<DataKeeper>(keeper);
+            dkMock.Setup(mock => mock.GetTableNames());
 
-        [TestMethod()]
-        public void printImportExportFileTypeNotSupportedErrorTest()
-        {
-            Assert.Fail();
-        }
+            string[] args = new string[] { "list", "tables" };
+            CLIParser cLIParser = new CLIParser(dkMock.Object);
+            cLIParser.parseArguments(args);
 
-        [TestMethod()]
-        public void printUnexpectedParametersErrorTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void printActionNotSupportedErrorTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void readHelpMessageTest()
-        {
-            Assert.Fail();
+            dkMock.Verify(mock => mock.GetTableNames(), Times.Once());
         }
     }
 }

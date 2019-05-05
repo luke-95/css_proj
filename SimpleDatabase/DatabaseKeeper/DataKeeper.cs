@@ -104,7 +104,7 @@ namespace DatabaseKeeper
             keeper.InsertEntries(tableName, columnName, index, newEntries);
         }
 
-        public void DeleteEntries(string tableName, string columnName, int startIndex, int stopIndex)
+        public virtual void DeleteEntries(string tableName, string columnName, int startIndex, int stopIndex)
         {
             keeper.DeleteEntries(tableName, columnName, startIndex, stopIndex);
         }
@@ -114,7 +114,7 @@ namespace DatabaseKeeper
             keeper.DeleteColumn(tableName, columnName);
         }
 
-        public Dictionary<string, List<string>> SelectData(string tableName, string op, string valueCmp)
+        public virtual Dictionary<string, List<string>> SelectData(string tableName, string op, string valueCmp)
         {
             List<string> columnNames = keeper.GetColumnNames(tableName);
             Dictionary<string, List<string>> columnData = new Dictionary<string, List<string>>();
@@ -172,7 +172,7 @@ namespace DatabaseKeeper
             return columnData;
         }
 
-        public List<string> GetTableNames()
+        public virtual List<string> GetTableNames()
         {
             return keeper.GetTableNames();
         }
