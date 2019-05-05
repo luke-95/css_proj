@@ -37,6 +37,12 @@ namespace DatabaseKeeper
 
         public static void Main2(string[] args)
         {
+            CLIParser parser = new CLIParser();
+            parser.parseArguments(args);
+        }
+
+        public void parseArguments(string[] args)
+        {
             String action = args[0].ToLower();
             if (!actions.Contains(action))
             {
@@ -51,7 +57,7 @@ namespace DatabaseKeeper
                         {
                             printIncorrectNumberOfParametersError();
                             break;
-                        } 
+                        }
                         else if (!args[1].Equals(FROM) || !args[3].Equals(WHERE) || !operators.Contains(args[5]))
                         {
                             printUnexpectedParametersError();
@@ -68,7 +74,7 @@ namespace DatabaseKeeper
                             printIncorrectNumberOfParametersError();
                             break;
                         }
-                        else if(!args[1].Equals(FROM) || !args[3].Equals(WHERE) || !operators.Contains(args[5]))
+                        else if (!args[1].Equals(FROM) || !args[3].Equals(WHERE) || !operators.Contains(args[5]))
                         {
                             printUnexpectedParametersError();
                             break;
@@ -100,7 +106,7 @@ namespace DatabaseKeeper
                             printIncorrectNumberOfParametersError();
                             break;
                         }
-                        else if(!args[1].Equals(TABLE) && !args[1].Equals(DATABASE))
+                        else if (!args[1].Equals(TABLE) && !args[1].Equals(DATABASE))
                         {
                             printUnexpectedParametersError();
                             break;
@@ -128,7 +134,7 @@ namespace DatabaseKeeper
                             printIncorrectNumberOfParametersError();
                             break;
                         }
-                        else if(!args[2].EndsWith(".csv")) 
+                        else if (!args[2].EndsWith(".csv"))
                         {
                             printImportExportFileTypeNotSupportedError();
                             break;
@@ -144,7 +150,7 @@ namespace DatabaseKeeper
                             printIncorrectNumberOfParametersError();
                             break;
                         }
-                        else if(!args[2].EndsWith(".csv"))
+                        else if (!args[2].EndsWith(".csv"))
                         {
                             printImportExportFileTypeNotSupportedError();
                             break;
@@ -155,7 +161,7 @@ namespace DatabaseKeeper
                         }
                         break;
                     case HELP:
-                        if(args.Length > 1)
+                        if (args.Length > 1)
                         {
                             printIncorrectNumberOfParametersError();
                             break;
@@ -170,7 +176,7 @@ namespace DatabaseKeeper
             Console.ReadLine();
         }
 
-        public static void selectEntries(string tableName, string columnName, string op, string value)
+        public void selectEntries(string tableName, string columnName, string op, string value)
         {
             Console.WriteLine("Selecting stuff: " + tableName + " " + columnName + " " + op + " " + value);
             TBDatabaseKeeper keeper = new TBDatabaseKeeper();
@@ -190,12 +196,12 @@ namespace DatabaseKeeper
             }
         }
 
-        public static void deleteEntries(string tableName, string columnName, string op, string value)
+        public void deleteEntries(string tableName, string columnName, string op, string value)
         {
             Console.WriteLine("Deleting stuff" + tableName + " " + columnName + " " + op + " " + value);
         }
 
-        public static void dropTable(string table)
+        public void dropTable(string table)
         {
             Console.WriteLine("Deleting table " + table);
             TBDatabaseKeeper keeper = new TBDatabaseKeeper();
@@ -204,7 +210,7 @@ namespace DatabaseKeeper
             dk.DeleteTable(table);
         }
 
-        public static void createTable(string table, List<String> columns)
+        public void createTable(string table, List<String> columns)
         {
             Console.WriteLine("Creating table " + table);
             TBDatabaseKeeper keeper = new TBDatabaseKeeper();
@@ -216,54 +222,54 @@ namespace DatabaseKeeper
             dk.CreateTable(table, columns);
         }
 
-        public static void importTable(string table, string csv)
+        public void importTable(string table, string csv)
         {
 
         }
 
-        public static void exportTable(string table, string csv)
+        public void exportTable(string table, string csv)
         {
 
         }
 
-        public static void createDatabase(string databaseName)
+        public void createDatabase(string databaseName)
         {
             TBDatabaseKeeper keeper = new TBDatabaseKeeper();
             DataKeeper dk = new DataKeeper(keeper);
             dk.CreateDatabase(databaseName, DATABASE_PATH);
         }
-        public static void listTable()
+        public void listTable()
         {
             Console.WriteLine("Listing table");
         }
 
         //Error messages
-        public static void printIncorrectNumberOfParametersError()
+        public void printIncorrectNumberOfParametersError()
         {
             Console.WriteLine("Incorrent number of parameters!\nType \"help\" for support.");
             Console.ReadLine();
         }
 
-        public static void printImportExportFileTypeNotSupportedError()
+        public void printImportExportFileTypeNotSupportedError()
         {
             Console.WriteLine("Import/Export file type not supported! Only .csv accepted");
             Console.ReadLine();
         }
 
-        public static void printUnexpectedParametersError()
+        public void printUnexpectedParametersError()
         {
             Console.WriteLine("Unexpected parametes found!\nType \"help\" for support.");
             Console.ReadLine();
         }
 
-        public static void printActionNotSupportedError(string action)
+        public void printActionNotSupportedError(string action)
         {
             Console.WriteLine("Action " + action + " not supported!\nType \"help\" for support.");
             Console.ReadLine();
         }
 
         //Read file utils
-        public static void readHelpMessage()
+        public void readHelpMessage()
         {
             {
                 string text = System.IO.File.ReadAllText("HelpFile.txt");
