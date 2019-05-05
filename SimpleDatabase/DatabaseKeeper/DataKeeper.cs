@@ -5,14 +5,14 @@ namespace DatabaseKeeper
 {
     public class DataKeeper
     {
-        public Dictionary<string, string> DatabasesDict;
+        public Dictionary<string, string> DatabasesList;
         public Dictionary<string, List<string>> DatabaseTables;
         public string databaseName;
         public IDatabaseKeeper keeper;
 
         public DataKeeper(IDatabaseKeeper keeper)
         {
-            DatabasesDict = new Dictionary<string, string>();
+            DatabasesList = new Dictionary<string, string>();
             DatabaseTables = new Dictionary<string, List<string>>();
             this.keeper = keeper;
         }
@@ -22,6 +22,7 @@ namespace DatabaseKeeper
             this.databaseName = databaseName;
             FileInfo file = new FileInfo(path + $"\\{databaseName}\\{databaseName}.txt");
             file.Directory.Create();
+            DatabasesList.Add(databaseName, path + $"\\{databaseName}\\");
         }
 
         // Dangerous Method !UNTESTED!
@@ -36,25 +37,23 @@ namespace DatabaseKeeper
 
         public void LoadDatabase(string databaseName, string path)
         {
-            DatabasesDict.Add(databaseName, path + $"\\{databaseName}\\");
+            DatabasesList.Add(databaseName, path + $"\\{databaseName}\\");
 
             DirectoryInfo directory = new DirectoryInfo(Path.Combine(path, databaseName));
             FileInfo[] files = directory.GetFiles();
 
             DatabaseTables.Add(databaseName, new List<string>());
-            foreach (var file in files)
+            foreach (var table in files)
             {
-                if (file.Name.EndsWith(".TB"))
-                {
-                    DatabaseTables[databaseName].Add(file.Name);
-                }
+                DatabaseTables[databaseName].Add(table.Name);
             }
+
         }
 
         public void SelectDatabase(string databaseName)
         {
             this.databaseName = databaseName;
-            keeper.SetDatabase(DatabaseTables, DatabasesDict, databaseName);
+            keeper.SetDatabase(DatabaseTables, DatabasesList, databaseName);
         }
 
         public object ReadTable(string tableName)
@@ -75,7 +74,7 @@ namespace DatabaseKeeper
         public void DeleteTable(string tableName)
         {
             keeper.DeleteTable(tableName);
-            this.DatabaseTables[databaseName].Remove(tableName+".TB");
+            this.DatabaseTables[databaseName].Remove(tableName + ".TB");
         }
 
         public void AddColumns(string tableName, List<string> columnNames)
@@ -120,7 +119,7 @@ namespace DatabaseKeeper
             foreach (string column in columnNames)
             {
                 List<string> columnValues = keeper.ReadColumn(tableName, column);
-                foreach(string value in columnValues)
+                foreach (string value in columnValues)
                 {
                     switch (op)
                     {
@@ -165,7 +164,6 @@ namespace DatabaseKeeper
                             }
                             break;
                     }
-                    
                 }
             }
             return columnData;
