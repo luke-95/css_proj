@@ -72,7 +72,7 @@
         </StackPanel>
 
         <!--Row 6-->
-        <DataGrid x:Name="dataGrid" Grid.Row="6" Grid.ColumnSpan="2"/>
+        <DataGrid x:Name="uiDataGrid" Grid.Row="6" Grid.ColumnSpan="2"/>
     </Grid>
 
 </Window>

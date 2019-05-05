@@ -42,7 +42,7 @@ namespace SimpleDatabase
             databaseController = new DatabaseController(tbKeeper, dataKeeper);
         }
 
-        public void DisplayTable(TableModel tableModel)
+        public void DisplayTable(DataGrid dataGrid, TableModel tableModel)
         {
             // --- Prepare Data to be displayed in a DataGrid
             // Create DataTable
@@ -94,7 +94,7 @@ namespace SimpleDatabase
                 // Display first table in the database, if one exists
                 if (databaseController.GetTableNames(selectedDatabase).Count > 0)
                 {
-                    DisplayTable(databaseController.ImportedDatabaseModel.Tables[0]);
+                    DisplayTable(uiDataGrid, databaseController.ImportedDatabaseModel.Tables[0]);
                 }
             }
             databaseImportInProgress = false;
@@ -121,13 +121,13 @@ namespace SimpleDatabase
                 ReloadTableNames();
                 TableNamesComboBox.SelectedIndex = TableNamesComboBox.Items.IndexOf(tableName);
                 databaseController.AddEntries(SelectedTableName, import);
-                DisplayTable(databaseController.ImportedDatabaseModel.GetTable(SelectedTableName));
+                DisplayTable(uiDataGrid, databaseController.ImportedDatabaseModel.GetTable(SelectedTableName));
             }
         }
 
         private void Button_Save_Click(object sender, RoutedEventArgs e)
         {
-            DataView dataView = (DataView)dataGrid.ItemsSource;
+            DataView dataView = (DataView)uiDataGrid.ItemsSource;
             DataTable dataTable = dataView.Table;
             List<string> tableOutputData = new List<string>();
 
@@ -176,19 +176,19 @@ namespace SimpleDatabase
 
         private void Button_AddColumn_Click(object sender, RoutedEventArgs e)
         {
-            if (dataGrid.ItemsSource != null)
+            if (uiDataGrid.ItemsSource != null)
             {
-                DataTable table = ((DataView)dataGrid.ItemsSource).Table;
+                DataTable table = ((DataView)uiDataGrid.ItemsSource).Table;
                 string newColumnName = ColumnNameTextBox.Text;
                 if (!table.Columns.Contains(newColumnName))
                 {
                     table.Columns.Add(new DataColumn(newColumnName, typeof(string)));
                     databaseController.ImportedDatabaseModel.GetTable(SelectedTableName).AddColumn(newColumnName, new List<string>());
 
-                    dataGrid.ItemsSource = null;
-                    dataGrid.Items.Refresh();
-                    dataGrid.ItemsSource = table.DefaultView;
-                    dataGrid.Items.Refresh();
+                    uiDataGrid.ItemsSource = null;
+                    uiDataGrid.Items.Refresh();
+                    uiDataGrid.ItemsSource = table.DefaultView;
+                    uiDataGrid.Items.Refresh();
                 }
                 else
                 {
@@ -236,7 +236,7 @@ namespace SimpleDatabase
 
                 if (SelectedDatabase.TableNames.Count > 0)
                 {
-                    DisplayTable(SelectedDatabase.Tables[0]);
+                    DisplayTable(uiDataGrid, SelectedDatabase.Tables[0]);
                 }
             }
         }
@@ -245,7 +245,7 @@ namespace SimpleDatabase
         {
             if (TableNamesComboBox.SelectedValue != null)
             {
-                DisplayTable(SelectedTable);
+                DisplayTable(uiDataGrid, SelectedTable);
             }
         }
 
