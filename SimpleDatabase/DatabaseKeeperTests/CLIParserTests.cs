@@ -1,16 +1,49 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using DatabaseKeeper;
-using System;
+using NUnit.Framework;
+using Moq;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace DatabaseKeeper.Tests
 {
     [TestClass()]
     public class CLIParserTests
     {
+        private Mock<TBDatabaseKeeper> mockedDBKeeper;
+        private readonly string tableName = "testTable";
+        private readonly string dbName = "testDB";
+        private readonly string path = @"F:\FII\M1\2\CSS\Proiect\css_proj\Databases";
+        private List<string> table;
+        private Dictionary<string, List<string>> databaseTables;
+        private Dictionary<string, string> databasesList;
+        private TBDatabaseKeeper keeper;
+        private DataKeeper dataKeeper;
+
+        [SetUp]
+        public void Init()
+        {
+            mockedDBKeeper = new Mock<TBDatabaseKeeper>();
+            //var dataKeeperMq = new Mock<DataKeeper>();
+            //dataKeeper = dataKeeperMq.Object;
+
+            table = new List<string>();
+            table.AddRange(new[] { "!Col1", "0-a1", "1-a2", "2-a3", "!Col2", "0-b1", "1-b2", "2-b3" });
+
+            databaseTables = new Dictionary<string, List<string>>();
+            var tables = new List<string>();
+            tables.Add(tableName + ".TB");
+            databaseTables.Add(dbName, tables);
+
+            databasesList = new Dictionary<string, string>();
+            databasesList[dbName] = path;
+
+
+            mockedDBKeeper.Setup(mq => mq.ReadTable(tableName)).Returns(table);
+            mockedDBKeeper.Object.SetDatabase(databaseTables, databasesList, dbName);
+
+
+        }
+
         [TestMethod()]
         public void Main2Test()
         {
@@ -32,18 +65,37 @@ namespace DatabaseKeeper.Tests
         [TestMethod()]
         public void dropTableTest()
         {
-            Assert.Fail();
+            string tableName = "tableName";
+            TBDatabaseKeeper keeper = new Mock<TBDatabaseKeeper>().Object; 
+            Mock<DataKeeper> dkMock = new Mock<DataKeeper>(keeper);
+            dkMock.Setup(mock => mock.DeleteTable(tableName));
+
+            string[] args = new string[] { "drop", "table", tableName };
+            CLIParser cLIParser = new CLIParser(dkMock.Object);
+            cLIParser.parseArguments(args);
+
+            dkMock.Verify(mock => mock.DeleteTable(tableName), Times.Once());
         }
 
         [TestMethod()]
         public void createTableTest()
         {
-            Assert.Fail();
+            string tableName = "tableName";
+            TBDatabaseKeeper keeper = new Mock<TBDatabaseKeeper>().Object;
+            Mock<DataKeeper> dkMock = new Mock<DataKeeper>(keeper);
+            dkMock.Setup(mock => mock.CreateTable(tableName, new List<string>()));
+
+            string[] args = new string[] { "create", "table", tableName };
+            CLIParser cLIParser = new CLIParser(dkMock.Object);
+            cLIParser.parseArguments(args);
+
+            dkMock.Verify(mock => mock.CreateTable(tableName, new List<string>()), Times.Once());
         }
 
         [TestMethod()]
         public void importTableTest()
         {
+
             Assert.Fail();
         }
 
@@ -56,7 +108,16 @@ namespace DatabaseKeeper.Tests
         [TestMethod()]
         public void createDatabaseTest()
         {
-            Assert.Fail();
+            string databaseName = "databaseName";
+            TBDatabaseKeeper keeper = new Mock<TBDatabaseKeeper>().Object;
+            Mock<DataKeeper> dkMock = new Mock<DataKeeper>(keeper);
+            dkMock.Setup(mock => mock.CreateDatabase(databaseName, path));
+
+            string[] args = new string[] { "create", "database", databaseName };
+            CLIParser cLIParser = new CLIParser(dkMock.Object);
+            cLIParser.parseArguments(args);
+
+            dkMock.Verify(mock => mock.CreateDatabase(databaseName, path), Times.Once());
         }
 
         [TestMethod()]

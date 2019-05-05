@@ -12,6 +12,8 @@ namespace DatabaseKeeper
         private static List<string> operators = new List<string> { "==", "=", "<", ">", "<=", ">=", "!=", "<>", "less", "lesseq", "greater", "greatereq"};
         private static List<string> actions = new List<string> { SELECT, DROP, CREATE, DELETE, IMPORT, EXPORT, HELP};
 
+        private DataKeeper dk;
+
         //Actions
         private const string SELECT = "select";
         private const string DELETE = "delete";
@@ -35,9 +37,17 @@ namespace DatabaseKeeper
         static string selectedDatabase = "NewDatabase";
         static string selectedTable = "MyTable";
 
+        public CLIParser(DataKeeper dataKeeper)
+        {
+            dk = dataKeeper;
+        }
+
         public static void Main2(string[] args)
         {
-            CLIParser parser = new CLIParser();
+            TBDatabaseKeeper tbDatabaseKeeper = new TBDatabaseKeeper();
+            DataKeeper dataKeeper = new DataKeeper(tbDatabaseKeeper);
+
+            CLIParser parser = new CLIParser(dataKeeper);
             parser.parseArguments(args);
         }
 
@@ -173,7 +183,6 @@ namespace DatabaseKeeper
                         break;
                 }
             }
-            Console.ReadLine();
         }
 
         public void selectEntries(string tableName, string columnName, string op, string value)
@@ -204,8 +213,6 @@ namespace DatabaseKeeper
         public void dropTable(string table)
         {
             Console.WriteLine("Deleting table " + table);
-            TBDatabaseKeeper keeper = new TBDatabaseKeeper();
-            DataKeeper dk = new DataKeeper(keeper);
 
             dk.DeleteTable(table);
         }
@@ -213,8 +220,6 @@ namespace DatabaseKeeper
         public void createTable(string table, List<String> columns)
         {
             Console.WriteLine("Creating table " + table);
-            TBDatabaseKeeper keeper = new TBDatabaseKeeper();
-            DataKeeper dk = new DataKeeper(keeper);
 
             dk.LoadDatabase(selectedDatabase, DATABASE_PATH);
             dk.SelectDatabase(selectedDatabase);
@@ -234,8 +239,6 @@ namespace DatabaseKeeper
 
         public void createDatabase(string databaseName)
         {
-            TBDatabaseKeeper keeper = new TBDatabaseKeeper();
-            DataKeeper dk = new DataKeeper(keeper);
             dk.CreateDatabase(databaseName, DATABASE_PATH);
         }
         public void listTable()

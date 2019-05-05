@@ -17,7 +17,7 @@ namespace DatabaseKeeper
             this.keeper = keeper;
         }
 
-        public void CreateDatabase(string databaseName, string path)
+        public virtual void CreateDatabase(string databaseName, string path)
         {
             this.databaseName = databaseName;
             FileInfo file = new FileInfo(path + $"\\{databaseName}\\{databaseName}.txt");
@@ -64,7 +64,7 @@ namespace DatabaseKeeper
             return keeper.ReadTable(tableName);
         }
 
-        public void CreateTable(string tableName, List<string> columns)
+        public virtual void CreateTable(string tableName, List<string> columns)
         {
             keeper.CreateTable(tableName, columns);
         }
@@ -74,7 +74,7 @@ namespace DatabaseKeeper
             keeper.UpdateTable(tableName, table);
         }
 
-        public void DeleteTable(string tableName)
+        public virtual void DeleteTable(string tableName)
         {
             keeper.DeleteTable(tableName);
             this.DatabaseTables[databaseName].Remove(tableName + ".TB");
