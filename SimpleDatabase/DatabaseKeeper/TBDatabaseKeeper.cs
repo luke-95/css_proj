@@ -52,7 +52,7 @@ namespace DatabaseKeeper
             
         }
 
-        public void UpdateTable(string tableName, object table)
+        public virtual void UpdateTable(string tableName, object table)
         {
             var TBtable = (List<string>) table;
 
@@ -158,24 +158,16 @@ namespace DatabaseKeeper
 
         public void AddEntries(string tableName, string columnName, List<string> entriesList)
         {
-            tableName = VerifyTableExistance(tableName);
+            var TBtable = (List<string>)ReadTable(tableName);
+            InsertEntriesInColumn(columnName, entriesList, TBtable);
+            UpdateTable(tableName,TBtable);
+        }
 
-            var path = DatabasesList[databaseName] + tableName;
-            var file = File.Open(path, FileMode.Open, FileAccess.ReadWrite);
-            var writer = new StreamWriter(file);
-            var reader = new StreamReader(file);
-            var TBtable = new List<string>();
-
-            while (!reader.EndOfStream)
-            {
-                TBtable.Add(reader.ReadLine());
-            }
-
-            file.Close();
-
+        protected void InsertEntriesInColumn(string columnName, List<string> entriesList, List<string> TBtable)
+        {
             var index = TBtable.IndexOf("!" + columnName);
             int i = 0;
-            while (index<TBtable.Count && !TBtable[index].StartsWith("!"))
+            while (index < TBtable.Count && !TBtable[index].StartsWith("!"))
             {
                 index++;
                 i++;
@@ -183,12 +175,13 @@ namespace DatabaseKeeper
 
             foreach (var entry in entriesList)
             {
-                TBtable.Insert(index+1, $"{i}-{entry}");
+                TBtable.Insert(index + 1, $"{i}-{entry}");
                 i++;
                 index++;
             }
-            UpdateTable(tableName,TBtable);
         }
+
+        //protected void UpdateEntry
 
         public void UpdateEntry(string tableName, string columnName, int index, string newValue)
         {
@@ -274,11 +267,19 @@ namespace DatabaseKeeper
             }
 
             var table = (List<string>)ReadTable(tableName);
+            DeleteEntriesInColumn(columnName, startIndex, stopIndex, table);
+
+            tableName = tableName + ".TB";
+            UpdateTable(tableName, table);
+        }
+
+        protected void DeleteEntriesInColumn(string columnName, int startIndex, int stopIndex, List<string> table)
+        {
             var tableIndex = table.IndexOf("!" + columnName);
             tableIndex++;
             int i = 0;
 
-            while (tableIndex < table.Count && !table[tableIndex].StartsWith("!") && startIndex<=stopIndex)
+            while (tableIndex < table.Count && !table[tableIndex].StartsWith("!") && startIndex <= stopIndex)
             {
                 if (table[tableIndex].StartsWith(startIndex.ToString()))
                 {
@@ -294,13 +295,10 @@ namespace DatabaseKeeper
 
             while (tableIndex < table.Count && !table[tableIndex].StartsWith("!"))
             {
-                table[tableIndex] = i + "-" + table[tableIndex].Split(new char[] { '-' }, 2)[1];
+                table[tableIndex] = i + "-" + table[tableIndex].Split(new char[] {'-'}, 2)[1];
                 i++;
                 tableIndex++;
             }
-
-            tableName = tableName + ".TB";
-            UpdateTable(tableName, table);
         }
 
         public List<string> GetColumnNames(string tableName)

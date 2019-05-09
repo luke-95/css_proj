@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using DatabaseKeeper;
+using DatabaseKeeperTests.Stubs;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
 using Moq;
+using NUnit.Framework.Constraints;
 
 namespace DatabaseKeeperTests
 {
@@ -17,15 +20,15 @@ namespace DatabaseKeeperTests
         private List<string> table;
         private Dictionary<string, List<string>> databaseTables;
         private Dictionary<string, string> databasesList;
-        private TBDatabaseKeeper keeper;
-        private Moq.Mock<TBDatabaseKeeper> mockedDBKeeper;
+        private TBDatabaseKeeperStub keeper;
+        private Moq.Mock<TBDatabaseKeeperStub> mockedDBKeeper;
 
         [SetUp]
         public void Init()
         {
-            mockedDBKeeper = new Mock<TBDatabaseKeeper>();
+            mockedDBKeeper = new Mock<TBDatabaseKeeperStub>();
             table =new List<string>();
-            table.AddRange(new[] { "!Col1", "0-a1", "1-a2", "2-a3","!Col2", "0-b1", "1-b2", "2-b3" });
+            table.AddRange(new[] { "!Col1", "0-a1", "1-a2", "2-a3","!Col2", "0-b1", "1-b2", "2-b3", "!Col3", "!Col4", "0-v1" });
 
             databaseTables= new Dictionary<string, List<string>>();
             var tables= new List<string>();
@@ -37,6 +40,7 @@ namespace DatabaseKeeperTests
 
 
             mockedDBKeeper.Setup(mq => mq.ReadTable(tableName)).Returns(table);
+
             mockedDBKeeper.Object.SetDatabase(databaseTables,databasesList,dbName);
 
         }
@@ -47,5 +51,102 @@ namespace DatabaseKeeperTests
 
             tableNameWithExtension.Should().Be(tableName + ".TB");
         }
+
+        [Test]
+
+        public void WhenTableColumnExistsThenReadColumnShouldReturnItsEntries()
+        {
+            //Arrange
+            var expectedEntries = new List<string>();
+            expectedEntries.AddRange( new []{ "b1", "b2", "b3" });
+            var requestedColumn = "Col2";
+
+            //Act
+            var readColumn = mockedDBKeeper.Object.ReadColumn(tableName, requestedColumn);
+
+            //Assert
+            readColumn.Should().BeEquivalentTo(expectedEntries);
+        }
+
+        [Test]
+        public void WhenTableColumnDoseNotExistThenReadColumnShouldReturnEmpty()
+        {
+            //Arrange
+            var requestedColumn = "Col20";
+
+            //Act
+            var readColumn = mockedDBKeeper.Object.ReadColumn(tableName, requestedColumn);
+
+            //Assert
+            readColumn.Should().BeEmpty();
+        }
+
+        [Test]
+        public void WhenTableColumnExistsButDoseNotHaveEntriesThenReadColumnReturnsEmpty()
+        {
+            //Arrange
+            var requestedColumn = "Col3";
+
+            //Act
+            var readColumn = mockedDBKeeper.Object.ReadColumn(tableName, requestedColumn);
+
+            //Assert
+            readColumn.Should().BeEmpty();
+        }
+
+        [Test]
+        public void GetColumnNamesShouldReturnAllColumnsInTableWithoutEntries()
+        {
+            //Arrange
+            var expectedColumns = new List<string>();
+            expectedColumns.AddRange(new[] { "Col1", "Col2", "Col3", "Col4" });
+
+            //Act
+            var columns = mockedDBKeeper.Object.GetColumnNames(tableName);
+
+            //Assert
+            columns.Should().BeEquivalentTo(expectedColumns);
+
+        }
+
+        [Test]
+        public void WhenColumnNameExistsEntriesThenEntriesAreInsertedCorrectly()
+        {
+            //Arrange
+            var columnOfInsertion = "Col3";
+            var entriesToInsert = new List<string>();
+            entriesToInsert.AddRange(new []{ "c1","c2"});
+
+            var expectedTable = new List<string>();
+            expectedTable.AddRange(new[] { "!Col1", "0-a1", "1-a2", "2-a3", "!Col2", "0-b1", "1-b2", "2-b3",
+                "!Col3", "0-c1", "1-c2", "!Col4", "0-v1" });
+
+            //Act
+            var TBtable = (List<string>)mockedDBKeeper.Object.ReadTable(tableName);
+            mockedDBKeeper.Object.InsertEntriesInColumn(columnOfInsertion, entriesToInsert,TBtable);
+
+            //Assert
+            TBtable.Should().BeEquivalentTo(expectedTable);
+        }
+
+        [Test]
+        public void WhenColumnNameAndEntriesBetweenSpecifiedEntriesExists()
+        {
+            //Arrange
+            var columnOfDeletion = "Col2";
+            int startDeleteIndex = 0;
+            int stopDeleteIndex = 1;
+
+            var expectedTable = new List<string>();
+            expectedTable.AddRange(new[] { "!Col1", "0-a1", "1-a2", "2-a3", "!Col2", "0-b3", "!Col3", "!Col4", "0-v1" });
+
+            //Act
+            var TBtable = (List<string>)mockedDBKeeper.Object.ReadTable(tableName);
+            mockedDBKeeper.Object.DeleteEntriesInColumn(columnOfDeletion,startDeleteIndex,stopDeleteIndex,TBtable);
+
+            //Assert
+            TBtable.Should().BeEquivalentTo(expectedTable);
+        }
+
     }
 }
