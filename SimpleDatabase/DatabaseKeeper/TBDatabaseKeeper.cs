@@ -301,7 +301,7 @@ namespace DatabaseKeeper
             }
         }
 
-        public List<string> GetColumnNames(string tableName)
+        public virtual List<string> GetColumnNames(string tableName)
         {
             List<string> table = (List<string>)ReadTable(tableName);
             List<string> columns = new List<string>();

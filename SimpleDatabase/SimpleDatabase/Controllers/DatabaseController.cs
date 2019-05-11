@@ -14,7 +14,7 @@ namespace SimpleDatabase.Controllers
 
         private SimpleDatabaseModel _importedDatabaseModel;
 
-        internal SimpleDatabaseModel ImportedDatabaseModel { get => _importedDatabaseModel; set => _importedDatabaseModel = value; }
+        public SimpleDatabaseModel ImportedDatabaseModel { get => _importedDatabaseModel; set => _importedDatabaseModel = value; }
 
         public DatabaseController(IDatabaseKeeper keeper, DataKeeper dataKeeper)
         {
@@ -117,7 +117,7 @@ namespace SimpleDatabase.Controllers
             return SimpleDatabaseModel.WithNoData();
         }
 
-        private string StripTableName(string tableName)
+        public string StripTableName(string tableName)
         {
             if (tableName.Contains(".TB"))
             {

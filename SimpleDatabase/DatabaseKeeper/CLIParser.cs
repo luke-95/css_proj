@@ -113,7 +113,7 @@ namespace DatabaseKeeper
                         }
                         break;
                     case CREATE:
-                        if (args.Length < 3)
+                        if (args.Length != 3)
                         {
                             printIncorrectNumberOfParametersError();
                             break;
@@ -173,15 +173,15 @@ namespace DatabaseKeeper
                         }
                         break;
                     case LIST:
-                        if (args.Length > 2)
+                        if (args.Length != 2)
                         {
                             printIncorrectNumberOfParametersError();
                             break;
-                        }
+                        } 
                         listTables();
                         break;
                     case HELP:
-                        if (args.Length > 1)
+                        if (args.Length != 1)
                         {
                             printIncorrectNumberOfParametersError();
                             break;
@@ -265,28 +265,28 @@ namespace DatabaseKeeper
         }
 
         //Error messages
-        public void printIncorrectNumberOfParametersError()
+        public virtual void printIncorrectNumberOfParametersError()
         {
             Console.WriteLine("Incorrent number of parameters!\nType \"help\" for support.");
-            Console.ReadLine();
+            //Console.ReadLine();
         }
 
-        public void printImportExportFileTypeNotSupportedError()
+        public virtual void printImportExportFileTypeNotSupportedError()
         {
             Console.WriteLine("Import/Export file type not supported! Only .csv accepted");
-            Console.ReadLine();
+            //Console.ReadLine();
         }
 
-        public void printUnexpectedParametersError()
+        public virtual void printUnexpectedParametersError()
         {
             Console.WriteLine("Unexpected parametes found!\nType \"help\" for support.");
-            Console.ReadLine();
+            //Console.ReadLine();
         }
 
-        public void printActionNotSupportedError(string action)
+        public virtual void printActionNotSupportedError(string action)
         {
             Console.WriteLine("Action " + action + " not supported!\nType \"help\" for support.");
-            Console.ReadLine();
+            //Console.ReadLine();
         }
 
         //Read file utils
@@ -296,7 +296,7 @@ namespace DatabaseKeeper
                 string text = System.IO.File.ReadAllText("HelpFile.txt");
 
                 Console.Write(text);
-                System.Console.ReadKey();
+                //System.Console.ReadKey();
             }
         }
     }

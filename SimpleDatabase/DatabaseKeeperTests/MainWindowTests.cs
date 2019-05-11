@@ -9,16 +9,16 @@ namespace SimpleDatabase.Tests
     [TestClass()]
     public class MainWindowTests
     {
-        [TestMethod()]
-        public void DisplayTableTest()
-        {
-            DataGrid dataGrid = new Mock<DataGrid>().Object;
-            TableModel tableModel = new Mock<TableModel>("name", new Dictionary<string, List<string>>()).Object;
+        //[TestMethod()]
+        //public void DisplayTableTest()
+        //{
+        //    DataGrid dataGrid = new Mock<DataGrid>().Object;
+        //    TableModel tableModel = new Mock<TableModel>("name", new Dictionary<string, List<string>>()).Object;
 
-            MainWindow mainWindow = new Mock<MainWindow>().Object;
-            mainWindow.DisplayTable(dataGrid, tableModel);
-            Assert.AreNotEqual(dataGrid.ItemsSource, null);
-        }
+        //    MainWindow mainWindow = new Mock<MainWindow>().Object;
+        //    mainWindow.DisplayTable(dataGrid, tableModel);
+        //    Assert.AreNotEqual(dataGrid.ItemsSource, null);
+        //}
 
         [TestMethod()]
         public void SetComboBoxItemsTest()

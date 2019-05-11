@@ -53,7 +53,7 @@ namespace DatabaseKeeper
 
         }
 
-        public void SelectDatabase(string databaseName)
+        public virtual void SelectDatabase(string databaseName)
         {
             this.databaseName = databaseName;
             keeper.SetDatabase(DatabaseTables, DatabasesList, databaseName);
@@ -69,7 +69,7 @@ namespace DatabaseKeeper
             keeper.CreateTable(tableName, columns);
         }
 
-        public void UpdateTable(string tableName, object table)
+        public virtual void UpdateTable(string tableName, object table)
         {
             keeper.UpdateTable(tableName, table);
         }
@@ -85,7 +85,7 @@ namespace DatabaseKeeper
             keeper.AddColumns(tableName, columnNames);
         }
 
-        public void AddEntries(string tableName, string columnName, List<string> entriesList)
+        public virtual void AddEntries(string tableName, string columnName, List<string> entriesList)
         {
             keeper.AddEntries(tableName, columnName, entriesList);
         }
