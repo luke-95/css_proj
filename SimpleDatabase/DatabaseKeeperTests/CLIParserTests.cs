@@ -6,7 +6,7 @@ using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace DatabaseKeeper.Tests
 {
-    [TestClass()]
+    [TestFixture]
     public class CLIParserTests
     {
         private Mock<TBDatabaseKeeper> mockedDBKeeper;

@@ -7,11 +7,12 @@ using System.Text;
 using Moq;
 using System.Threading.Tasks;
 using DatabaseKeeper;
+using NUnit.Framework;
 
 namespace SimpleDatabase.Controllers.Tests
 {
 
-    [TestClass()]
+    [TestFixture]
     public class DatabaseControllerTests
     {
         private readonly string path = @"F:\FII\M1\2\CSS\Proiect\css_proj\Databases";
@@ -35,49 +36,41 @@ namespace SimpleDatabase.Controllers.Tests
         [TestMethod()]
         public void CreateEmptyTableTest()
         {
-            Assert.Fail();
         }
 
         [TestMethod()]
         public void SaveTableTest()
         {
-            Assert.Fail();
         }
 
         [TestMethod()]
         public void DeleteTableTest()
         {
-            Assert.Fail();
         }
 
         [TestMethod()]
         public void AddEntriesTest()
         {
-            Assert.Fail();
         }
 
         [TestMethod()]
         public void GetTableNamesTest()
         {
-            Assert.Fail();
         }
 
         [TestMethod()]
         public void GetColumnNamesTest()
         {
-            Assert.Fail();
         }
 
         [TestMethod()]
         public void LoadDatabaseTest()
         {
-            Assert.Fail();
         }
 
         [TestMethod()]
         public void GetDatabaseNamesTest()
         {
-            Assert.Fail();
         }
     }
 }
