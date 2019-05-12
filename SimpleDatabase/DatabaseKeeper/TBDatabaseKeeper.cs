@@ -159,11 +159,11 @@ namespace DatabaseKeeper
         public void AddEntries(string tableName, string columnName, List<string> entriesList)
         {
             var TBtable = (List<string>)ReadTable(tableName);
-            InsertEntriesInColumn(columnName, entriesList, TBtable);
+            AddEntriesInColumn(columnName, entriesList, TBtable);
             UpdateTable(tableName,TBtable);
         }
 
-        protected void InsertEntriesInColumn(string columnName, List<string> entriesList, List<string> TBtable)
+        protected void AddEntriesInColumn(string columnName, List<string> entriesList, List<string> TBtable)
         {
             var index = TBtable.IndexOf("!" + columnName);
             int i = 0;
@@ -181,17 +181,14 @@ namespace DatabaseKeeper
             }
         }
 
-        //protected void UpdateEntry
-
-        public void UpdateEntry(string tableName, string columnName, int index, string newValue)
+        protected void UpdateEntryInColumn(List<string> table, string columnName, int index, string newValue)
         {
-
-            var table = (List<string>)ReadTable(tableName);
+            
 
             var tableIndex = table.IndexOf("!" + columnName);
             tableIndex++;
 
-            while (tableIndex<table.Count && !table[tableIndex].StartsWith("!"))
+            while (tableIndex < table.Count && !table[tableIndex].StartsWith("!"))
             {
                 if (table[tableIndex].StartsWith(index.ToString()))
                 {
@@ -201,16 +198,19 @@ namespace DatabaseKeeper
 
                 tableIndex++;
             }
+        }
 
+        public void UpdateEntry(string tableName, string columnName, int index, string newValue)
+        {
+            var table = (List<string>)ReadTable(tableName);
+            UpdateEntryInColumn(table,columnName,index,newValue);
             tableName = tableName + ".TB";
             UpdateTable(tableName, table);
         }
 
-        public void InsertEntries(string tableName, string columnName, int index, List<string> newEntries)
+        protected void InsertEntriesInColumnAt(List<string> table, string columnName, int index,
+            List<string> newEntries)
         {
-
-            var table = (List<string>)ReadTable(tableName);
-
             var tableIndex = table.IndexOf("!" + columnName);
             tableIndex++;
             int i = 0;
@@ -235,11 +235,17 @@ namespace DatabaseKeeper
 
             while (tableIndex < table.Count && !table[tableIndex].StartsWith("!"))
             {
-                table[tableIndex] = i + "-" + table[tableIndex].Split(new char[] {'-'}, 2)[1];
+                table[tableIndex] = i + "-" + table[tableIndex].Split(new char[] { '-' }, 2)[1];
                 i++;
                 tableIndex++;
             }
+        }
 
+        public void InsertEntries(string tableName, string columnName, int index, List<string> newEntries)
+        {
+
+            var table = (List<string>)ReadTable(tableName);
+            InsertEntriesInColumnAt(table,columnName,index,newEntries);
             tableName = tableName + ".TB";
             UpdateTable(tableName, table);
         }

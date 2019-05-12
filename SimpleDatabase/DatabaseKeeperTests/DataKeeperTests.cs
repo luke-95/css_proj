@@ -123,14 +123,14 @@ namespace DatabaseKeeperTests
 
             //Act
             var TBtable = (List<string>)mockedDBKeeper.Object.ReadTable(tableName);
-            mockedDBKeeper.Object.InsertEntriesInColumn(columnOfInsertion, entriesToInsert,TBtable);
+            mockedDBKeeper.Object.AddEntriesInColumn(columnOfInsertion, entriesToInsert,TBtable);
 
             //Assert
             TBtable.Should().BeEquivalentTo(expectedTable);
         }
 
         [Test]
-        public void WhenColumnNameAndEntriesBetweenSpecifiedEntriesExists()
+        public void WhenColumnNameAndEntriesBetweenSpecifiedEntriesExistDeleteEntriesShouldRemoveThem()
         {
             //Arrange
             var columnOfDeletion = "Col2";
@@ -148,5 +148,44 @@ namespace DatabaseKeeperTests
             TBtable.Should().BeEquivalentTo(expectedTable);
         }
 
+        [Test]
+        public void WhenSpecifiedIndexAndColumnExistsThenUpdateEntryShouldReplaceItsValueInTable()
+        {
+            //Arrange
+            var columnName = "Col1";
+            var indexOfValueToUpdate = 0;
+            var newValue = "UpdatedValue";
+
+            var expectedTable = new List<string>();
+            expectedTable.AddRange(new[] { "!Col1", "0-UpdatedValue", "1-a2", "2-a3", "!Col2", "0-b1", "1-b2", "2-b3", "!Col3", "!Col4", "0-v1" });
+
+            //Act
+            var TBtable = (List<string>)mockedDBKeeper.Object.ReadTable(tableName);
+            mockedDBKeeper.Object.UpdateEntryInColumn(TBtable,columnName,indexOfValueToUpdate,newValue);
+
+            //Assert
+            TBtable.Should().BeEquivalentTo(expectedTable);
+        }
+
+        [Test]
+        public void WhenIndexAndColumnExistsThenEntriesShouldBeInsertedAndColumnReindexed()
+        {
+            //Arrange
+            var columnName = "Col1";
+            var indexOfInsertion = 1;
+
+            var entriesToInsert = new List<string>();
+            entriesToInsert.AddRange(new string[] {"x","y","z"});
+
+            var expectedTable = new List<string>();
+            expectedTable.AddRange(new[] { "!Col1", "0-a1", "1-x", "2-y","3-z", "4-a2", "5-a3", "!Col2", "0-b1", "1-b2", "2-b3", "!Col3", "!Col4", "0-v1" });
+
+            //Act
+            var TBtable = (List<string>)mockedDBKeeper.Object.ReadTable(tableName);
+            mockedDBKeeper.Object.InsertEntriesInColumnAt(TBtable,columnName,indexOfInsertion,entriesToInsert);
+
+            //Assert
+            TBtable.Should().BeEquivalentTo(expectedTable);
+        }
     }
 }
