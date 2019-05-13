@@ -7,7 +7,7 @@ using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace DatabaseKeeper.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class CLIParserTests
     {
         private Mock<TBDatabaseKeeper> mockedDBKeeper;
@@ -43,7 +43,7 @@ namespace DatabaseKeeper.Tests
             mockedDBKeeper.Object.SetDatabase(databaseTables, databasesList, dbName);
         }
 
-        [TestMethod()]
+        [Test]
         public void selectEntriesTest()
         {
             string tableName = "tableName";
@@ -58,7 +58,7 @@ namespace DatabaseKeeper.Tests
             dkMock.Verify(mock => mock.SelectData(tableName, ">", "10"), Times.Once());
         }
 
-        [TestMethod()]
+        [Test]
         public void selectEntriesTestWithMoreArguments()
         {
             string tableName = "tableName";
@@ -74,7 +74,7 @@ namespace DatabaseKeeper.Tests
             cLIParserMock.Verify(mock => mock.printIncorrectNumberOfParametersError(), Times.Once);
         }
 
-        [TestMethod()]
+        [Test]
         public void selectEntriesTestWithLessArguments()
         {
             string tableName = "tableName";
@@ -90,7 +90,7 @@ namespace DatabaseKeeper.Tests
             cLIParserMock.Verify(mock => mock.printIncorrectNumberOfParametersError(), Times.Once);
         }
 
-        [TestMethod()]
+        [Test]
         public void selectEntriesTestWithWrongArguments()
         {
             string tableName = "tableName";
@@ -105,7 +105,7 @@ namespace DatabaseKeeper.Tests
             cLIParserMock.Verify(mock => mock.printUnexpectedParametersError(), Times.Once);
         }
 
-        [TestMethod()]
+        [Test]
         public void deleteEntriesTest()
         {
             string tableName = "tableName";
@@ -121,7 +121,7 @@ namespace DatabaseKeeper.Tests
         }
 
 
-        [TestMethod()]
+        [Test]
         public void deleteEntriesTestWithMoreArguments()
         {
             string tableName = "tableName";
@@ -137,7 +137,7 @@ namespace DatabaseKeeper.Tests
             cLIParserMock.Verify(mock => mock.printIncorrectNumberOfParametersError(), Times.Once);
         }
 
-        [TestMethod()]
+        [Test]
         public void deleteEntriesTestWithLessArguments()
         {
             string tableName = "tableName";
@@ -153,7 +153,7 @@ namespace DatabaseKeeper.Tests
             cLIParserMock.Verify(mock => mock.printIncorrectNumberOfParametersError(), Times.Once);
         }
 
-        [TestMethod()]
+        [Test]
         public void deleteEntriesTestWithWrongArguments()
         {
             string tableName = "tableName";
@@ -168,7 +168,7 @@ namespace DatabaseKeeper.Tests
             cLIParserMock.Verify(mock => mock.printUnexpectedParametersError(), Times.Once);
         }
 
-        [TestMethod()]
+        [Test]
         public void dropTableTest()
         {
             string tableName = "tableName";
@@ -183,7 +183,7 @@ namespace DatabaseKeeper.Tests
             dkMock.Verify(mock => mock.DeleteTable(tableName), Times.Once());
         }
 
-        [TestMethod()]
+        [Test]
         public void dropTableTestWithMoreArguments()
         {
             string tableName = "tableName";
@@ -199,7 +199,7 @@ namespace DatabaseKeeper.Tests
             cLIParserMock.Verify(mock => mock.printIncorrectNumberOfParametersError(), Times.Once);
         }
 
-        [TestMethod()]
+        [Test]
         public void dropTableTestWithLessArguments()
         {
             string tableName = "tableName";
@@ -215,7 +215,7 @@ namespace DatabaseKeeper.Tests
             cLIParserMock.Verify(mock => mock.printIncorrectNumberOfParametersError(), Times.Once);
         }
 
-        [TestMethod()]
+        [Test]
         public void dropTableTestWithWrongArguments()
         {
             string tableName = "tableName";
@@ -230,7 +230,7 @@ namespace DatabaseKeeper.Tests
             cLIParserMock.Verify(mock => mock.printUnexpectedParametersError(), Times.Once);
         }
 
-        [TestMethod()]
+        [Test]
         public void createTableTest()
         {
             string tableName = "tableName";
@@ -245,7 +245,7 @@ namespace DatabaseKeeper.Tests
             dkMock.Verify(mock => mock.CreateTable(tableName, new List<string>()), Times.Once());
         }
 
-        [TestMethod()]
+        [Test]
         public void createTableTestWithMoreArguments()
         {
             string tableName = "tableName";
@@ -261,7 +261,7 @@ namespace DatabaseKeeper.Tests
             cLIParserMock.Verify(mock => mock.printIncorrectNumberOfParametersError(), Times.Once);
         }
 
-        [TestMethod()]
+        [Test]
         public void createTableTestWithLessArguments()
         {
             string tableName = "tableName";
@@ -277,7 +277,7 @@ namespace DatabaseKeeper.Tests
             cLIParserMock.Verify(mock => mock.printIncorrectNumberOfParametersError(), Times.Once);
         }
 
-        [TestMethod()]
+        [Test]
         public void createTableTestWithWrongArguments()
         {
             string tableName = "tableName";
@@ -292,7 +292,7 @@ namespace DatabaseKeeper.Tests
             cLIParserMock.Verify(mock => mock.printUnexpectedParametersError(), Times.Once);
         }
 
-        [TestMethod()]
+        [Test]
         public void createDatabaseTest()
         {
             string databaseName = "databaseName";
@@ -307,7 +307,7 @@ namespace DatabaseKeeper.Tests
             dkMock.Verify(mock => mock.CreateDatabase(databaseName, path), Times.Once());
         }
 
-        [TestMethod()]
+        [Test]
         public void createDatabaseTestWithMoreArguments()
         {
             string databaseName = "databaseName";
@@ -323,7 +323,7 @@ namespace DatabaseKeeper.Tests
             cLIParserMock.Verify(mock => mock.printIncorrectNumberOfParametersError(), Times.Once);
         }
 
-        [TestMethod()]
+        [Test]
         public void createDatabaseTestWithLessArguments()
         {
             string databaseName = "databaseName";
@@ -339,7 +339,7 @@ namespace DatabaseKeeper.Tests
             cLIParserMock.Verify(mock => mock.printIncorrectNumberOfParametersError(), Times.Once);
         }
 
-        [TestMethod()]
+        [Test]
         public void createDatabaseTestWithWrongArguments()
         {
             string databaseName = "databaseName";
@@ -354,7 +354,7 @@ namespace DatabaseKeeper.Tests
             cLIParserMock.Verify(mock => mock.printUnexpectedParametersError(), Times.Once);
         }
 
-        [TestMethod()]
+        [Test]
         public void listTableTest()
         {
             TBDatabaseKeeper keeper = new Mock<TBDatabaseKeeper>().Object;
@@ -368,7 +368,7 @@ namespace DatabaseKeeper.Tests
             dkMock.Verify(mock => mock.GetTableNames(), Times.Once());
         }
 
-        [TestMethod()]
+        [Test]
         public void listTableTestWithMoreArguments()
         {
             TBDatabaseKeeper keeper = new Mock<TBDatabaseKeeper>().Object;
@@ -383,7 +383,7 @@ namespace DatabaseKeeper.Tests
             cLIParserMock.Verify(mock => mock.printIncorrectNumberOfParametersError(), Times.Once);
         }
 
-        [TestMethod()]
+        [Test]
         public void listTableTestWithLessArguments()
         {
             TBDatabaseKeeper keeper = new Mock<TBDatabaseKeeper>().Object;

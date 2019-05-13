@@ -82,7 +82,6 @@
     <Compile Include="CLIParserTests.cs" />
     <Compile Include="Controllers\DatabaseControllerTests.cs" />
     <Compile Include="DataKeeperTests.cs" />
-    <Compile Include="MainWindowTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stubs\TBDatabaseKeeperStub.cs" />
   </ItemGroup>

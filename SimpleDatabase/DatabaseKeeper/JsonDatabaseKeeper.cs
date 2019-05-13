@@ -9,12 +9,13 @@ using Newtonsoft.Json.Linq;
 
 namespace DatabaseKeeper
 {
-    public class JsonDatabaseKeeper : IDatabaseKeeper
+    public class JsonDatabaseKeeper 
     {
+        
         public Dictionary<string, List<string>> DatabaseTables;
         public Dictionary<string, string> DatabasesList;
         public string databaseName;
-
+        /*
 
         public void CreateTable(string tableName, List<string> columns)
         {
@@ -164,5 +165,6 @@ namespace DatabaseKeeper
         {
             return DatabaseTables.Keys.ToList<string>();
         }
+        */
     }
 }

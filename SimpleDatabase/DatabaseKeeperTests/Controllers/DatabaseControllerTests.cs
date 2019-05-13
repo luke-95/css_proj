@@ -13,12 +13,12 @@ using SimpleDatabase.Models;
 namespace SimpleDatabase.Controllers.Tests
 {
 
-    [TestClass()]
+    [TestFixture]
     public class DatabaseControllerTests
     {
         private readonly string path = @"F:\FII\M1\2\CSS\Proiect\css_proj\Databases";
 
-        [TestMethod()]
+        [Test]
         public void CreateDatabaseTest()
         {
             string databaseName = "databasename";
@@ -34,7 +34,7 @@ namespace SimpleDatabase.Controllers.Tests
             dkMock.Verify(mock => mock.LoadDatabase(databaseName, path), Times.Once());
         }
 
-        [TestMethod()]
+        [Test]
         public void CreateEmptyTableTest()
         {
             string tableName = "table";
@@ -49,7 +49,7 @@ namespace SimpleDatabase.Controllers.Tests
             dkMock.Verify(mock => mock.CreateTable(tableName, new List<string>()), Times.Once());
         }
 
-        [TestMethod()]
+        [Test]
         public void SaveTableTest()
         {
             string tableName = "table";
@@ -64,7 +64,7 @@ namespace SimpleDatabase.Controllers.Tests
             dkMock.Verify(mock => mock.UpdateTable($"{tableName}.TB", new List<string>()), Times.Once());
         }
 
-        [TestMethod()]
+        [Test]
         public void DeleteTableTest()
         {
             string tableName = "table";
@@ -80,7 +80,7 @@ namespace SimpleDatabase.Controllers.Tests
             dkMock.Verify(mock => mock.DeleteTable(tableName), Times.Once());
         }
 
-        [TestMethod()]
+        [Test]
         public void AddEntriesTest()
         {
             string tableName = "table";
@@ -107,7 +107,7 @@ namespace SimpleDatabase.Controllers.Tests
             }
         }
 
-        [TestMethod()]
+        [Test]
         public void GetTableNamesTest()
         {
             string databasename = "database";
@@ -126,7 +126,7 @@ namespace SimpleDatabase.Controllers.Tests
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(namesList, databaseController.GetTableNames(databasename));
         }
 
-        [TestMethod()]
+        [Test]
         public void GetColumnNamesTest()
         {
             string tableName = "table";
@@ -142,7 +142,7 @@ namespace SimpleDatabase.Controllers.Tests
             keeperMock.Verify(mock => mock.GetColumnNames(tableName), Times.Once());
         }
 
-        [TestMethod()]
+        [Test]
         public void LoadDatabaseTest()
         {
             string databaseName = "databasename";
@@ -158,13 +158,13 @@ namespace SimpleDatabase.Controllers.Tests
             dkMock.Verify(mock => mock.SelectDatabase(databaseName), Times.Once());
         }
 
-        [TestMethod()]
+        [Test]
         public void GetDatabaseNamesTest()
         {
 
         }
 
-        [TestMethod()]
+        [Test]
         public void StripTableNameTest()
         {
             string tableNameWithoutExtension = "tableName";
