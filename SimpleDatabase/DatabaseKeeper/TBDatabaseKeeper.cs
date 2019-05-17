@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -54,6 +55,9 @@ namespace DatabaseKeeper
 
         public virtual void UpdateTable(string tableName, object table)
         {
+            Debug.Assert(tableName != null, "Null table name,no string just null");
+            Debug.Assert(tableName.Length != 0, "No table name given");
+
             var TBtable = (List<string>) table;
 
             if (!DatabasesList.ContainsKey(databaseName))
@@ -75,6 +79,9 @@ namespace DatabaseKeeper
 
         public void DeleteTable(string tableName)
         {
+            Debug.Assert(tableName != null, "Null table name,no string just null");
+            Debug.Assert(tableName.Length != 0, "No table name given");
+
             tableName = VerifyTableExistance(tableName);
 
             var path = DatabasesList[databaseName] + tableName;
@@ -84,6 +91,9 @@ namespace DatabaseKeeper
 
         public string VerifyTableExistance(string tableName)
         {
+            Debug.Assert(tableName != null, "Null table name,no string just null");
+            Debug.Assert(tableName.Length != 0, "No table name given");
+
             tableName = tableName + ".TB";
             if (!DatabasesList.ContainsKey(databaseName))
                 throw new Exception("Database Not Loaded!");
@@ -94,6 +104,9 @@ namespace DatabaseKeeper
 
         public virtual object ReadTable(string tableName)
         {
+            Debug.Assert(tableName!=null, "Null table name,no string just null");
+            Debug.Assert(tableName.Length!=0, "No table name given");
+
             tableName = tableName + ".TB";
             var path = DatabasesList[databaseName] + tableName;
             var TBtable= new List<string>();
@@ -108,8 +121,15 @@ namespace DatabaseKeeper
 
         public void RenameTable(string oldTableName, string newTableName)
         {
+            Debug.Assert(oldTableName!=null, "Null table name,no string just null");
+            Debug.Assert(newTableName != null, "Null table name,no string just null");
+            Debug.Assert(oldTableName.Length!=0, "No table name given");
+            Debug.Assert(newTableName.Length!=0, "Rename with no name");
+
             oldTableName = oldTableName + ".TB";
             newTableName = newTableName + ".TB";
+
+            Debug.Assert(oldTableName!=newTableName, "Rename with the same name");
 
             var path = DatabasesList[databaseName] + oldTableName;
             var newpath = DatabasesList[databaseName] + newTableName;
@@ -158,6 +178,9 @@ namespace DatabaseKeeper
 
         public void AddEntries(string tableName, string columnName, List<string> entriesList)
         {
+            Debug.Assert(tableName != null, "Null table name,no string just null");
+            Debug.Assert(tableName.Length != 0, "No table name given");
+
             var TBtable = (List<string>)ReadTable(tableName);
             AddEntriesInColumn(columnName, entriesList, TBtable);
             UpdateTable(tableName,TBtable);
@@ -166,6 +189,8 @@ namespace DatabaseKeeper
         protected void AddEntriesInColumn(string columnName, List<string> entriesList, List<string> TBtable)
         {
             var index = TBtable.IndexOf("!" + columnName);
+            Debug.Assert(index != -1, "Trying to add entries in inexistent Column");
+
             int i = 0;
             while (index < TBtable.Count && !TBtable[index].StartsWith("!"))
             {
@@ -183,9 +208,11 @@ namespace DatabaseKeeper
 
         protected void UpdateEntryInColumn(List<string> table, string columnName, int index, string newValue)
         {
-            
+
+            Debug.Assert(table != null, "Table given is null");
 
             var tableIndex = table.IndexOf("!" + columnName);
+            Debug.Assert(tableIndex != -1, "Update entry in inexistent Column");
             tableIndex++;
 
             while (tableIndex < table.Count && !table[tableIndex].StartsWith("!"))
@@ -202,6 +229,9 @@ namespace DatabaseKeeper
 
         public void UpdateEntry(string tableName, string columnName, int index, string newValue)
         {
+            Debug.Assert(tableName != null, "Null table name,no string just null");
+            Debug.Assert(tableName.Length != 0, "No table name given");
+
             var table = (List<string>)ReadTable(tableName);
             UpdateEntryInColumn(table,columnName,index,newValue);
             tableName = tableName + ".TB";
@@ -211,7 +241,11 @@ namespace DatabaseKeeper
         protected void InsertEntriesInColumnAt(List<string> table, string columnName, int index,
             List<string> newEntries)
         {
+            Debug.Assert(table!=null, "Table given is null");
+
             var tableIndex = table.IndexOf("!" + columnName);
+            Debug.Assert(tableIndex != -1, "Insertion in inexistent Column");
+
             tableIndex++;
             int i = 0;
 
@@ -254,6 +288,9 @@ namespace DatabaseKeeper
         {
             var table = (List<string>)ReadTable(tableName);
             var tableIndex = table.IndexOf("!" + columnName);
+
+            Debug.Assert(tableIndex != -1 , "Deletion of inexistent column");
+
             table.RemoveAt(tableIndex);
 
             while (tableIndex < table.Count && !table[tableIndex].StartsWith("!"))
