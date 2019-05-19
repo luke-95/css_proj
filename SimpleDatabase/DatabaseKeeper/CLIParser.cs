@@ -1,6 +1,7 @@
 ﻿using DatabaseKeeper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -55,6 +56,8 @@ namespace DatabaseKeeper
 
         public void parseArguments(string[] args)
         {
+            Debug.Assert(args.Length > 0, "Empty arguments!");
+
             String action = args[0].ToLower();
             if (!actions.Contains(action))
             {
@@ -197,6 +200,9 @@ namespace DatabaseKeeper
 
         public void selectEntries(string tableName, string columnName, string op, string value)
         {
+            Debug.Assert(tableName != null && tableName.Length > 0, "Empty table name!");
+            Debug.Assert(columnName != null && columnName.Length > 0, "Empty column name!");
+
             Console.WriteLine("Selecting stuff: " + tableName + " " + columnName + " " + op + " " + value);
             dk.LoadDatabase(selectedDatabase, DATABASE_PATH);
             dk.SelectDatabase(selectedDatabase);
@@ -216,12 +222,22 @@ namespace DatabaseKeeper
 
         public void deleteEntries(string tableName, string columnName, string start, string end)
         {
+            Debug.Assert(tableName != null && tableName.Length > 0, "Empty table name!");
+            Debug.Assert(columnName != null && columnName.Length > 0, "Empty column name!");
+
+            int startIndex = Int32.Parse(start);
+            int endIndex = Int32.Parse(end);
+
+            Debug.Assert(startIndex > 0, "Invalid start Index!");
+            Debug.Assert(endIndex > 0, "Invalid end Index!");
+
             Console.WriteLine("Deleting stuff" + tableName + " " + columnName + " " + start + " " + end);
-            dk.DeleteEntries(tableName, columnName, Int32.Parse(start), Int32.Parse(end));
+            dk.DeleteEntries(tableName, columnName, startIndex, endIndex);
         }
 
         public void dropTable(string table)
         {
+            Debug.Assert(table != null && table.Length > 0, "Empty table name!");
             Console.WriteLine("Deleting table " + table);
 
             dk.DeleteTable(table);
@@ -229,6 +245,7 @@ namespace DatabaseKeeper
 
         public void createTable(string table, List<String> columns)
         {
+            Debug.Assert(table != null && table.Length > 0, "Empty table name!");
             Console.WriteLine("Creating table " + table);
 
             dk.LoadDatabase(selectedDatabase, DATABASE_PATH);
@@ -239,16 +256,18 @@ namespace DatabaseKeeper
 
         public void importTable(string table, string csv)
         {
-
+            //TODO - implement
         }
 
         public void exportTable(string table, string csv)
         {
-
+            //TODO - implement
         }
 
         public void createDatabase(string databaseName)
         {
+            Debug.Assert(databaseName != null && databaseName.Length > 0, "Empty database name!");
+
             dk.CreateDatabase(databaseName, DATABASE_PATH);
         }
         public void listTables()

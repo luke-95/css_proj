@@ -1,6 +1,7 @@
 ﻿using DatabaseKeeper;
 using SimpleDatabase.Models;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace SimpleDatabase.Controllers
 {
@@ -18,6 +19,9 @@ namespace SimpleDatabase.Controllers
 
         public DatabaseController(IDatabaseKeeper keeper, DataKeeper dataKeeper)
         {
+            Debug.Assert(keeper != null, "Database keeper can't be null!");
+            Debug.Assert(dataKeeper != null, "Data keeper can't be null!");
+
             this.keeper = keeper;
             this.dataKeeper = dataKeeper;
         }
@@ -38,18 +42,23 @@ namespace SimpleDatabase.Controllers
             {
                 columnData[columnName] = new List<string>();
             }
+            Debug.Assert(ImportedDatabaseModel.Tables != null, "Tables in DatabaseModel can't be null!");
             ImportedDatabaseModel.Tables.Add(new TableModel(TableName, columnData));
         }
 
         public void SaveTable(string tableName, List<string> data)
         {
+            Debug.Assert(dataKeeper.GetTableNames().Contains(tableName), "Table missing from dataKeeper!");
             dataKeeper.UpdateTable($"{tableName}.TB", data);
         }
 
         public void DeleteTable(string tableName)
         {
             dataKeeper.DeleteTable(tableName);
+
+            Debug.Assert(ImportedDatabaseModel.GetTable(tableName) != null, "Table doesn't exist in ImportedDatabaseModel!");
             ImportedDatabaseModel.DeleteTable(tableName);
+            Debug.Assert(ImportedDatabaseModel.GetTable(tableName) == null, "Failed to remove table from ImportedDatabaseModel!");
         }
 
 
@@ -64,6 +73,9 @@ namespace SimpleDatabase.Controllers
         
         public List<string> GetTableNames(string DatabaseName)
         {
+            List<string> tableKeys = new List<string>(dataKeeper.DatabaseTables.Keys);
+            Debug.Assert(tableKeys.Contains(DatabaseName), "Database name not present in tables list!");
+
             List<string> tableNames = new List<string>();
             foreach (string name in dataKeeper.DatabaseTables[DatabaseName])
             {
@@ -79,9 +91,14 @@ namespace SimpleDatabase.Controllers
 
         public void LoadDatabase(string DatabaseName, string DatabasePath = DEFAULT_DATABASE_PATH)
         {
+            Debug.Assert(DatabaseName != null, "Database name can't be null!");
+
             dataKeeper.LoadDatabase(DatabaseName, DatabasePath);
             dataKeeper.SelectDatabase(DatabaseName);
             ImportedDatabaseModel = SelectedDatabaseToModel();
+
+            Debug.Assert(ImportedDatabaseModel != null, "Resulted ImportedDatabaseModel can't be null!");
+            Debug.Assert(dataKeeper.DatabasesList.ContainsKey(DatabaseName), "Loading database failed!");
         }
 
         public List<string> GetDatabaseNames()
@@ -119,6 +136,7 @@ namespace SimpleDatabase.Controllers
 
         public string StripTableName(string tableName)
         {
+            Debug.Assert(tableName != null, "Table name can't be null!");
             if (tableName.Contains(".TB"))
             {
                 tableName = tableName.Substring(0, tableName.Length - 3);

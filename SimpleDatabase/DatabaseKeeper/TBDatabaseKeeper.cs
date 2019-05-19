@@ -50,7 +50,7 @@ namespace DatabaseKeeper
                 DatabaseTables[databaseName] = new List<string>();
                 DatabaseTables[databaseName].Add(tableName);
             }
-            
+            Debug.Assert(DatabaseTables[databaseName].Contains(tableName), "Table creation failed!");
         }
 
         public virtual void UpdateTable(string tableName, object table)
@@ -212,7 +212,7 @@ namespace DatabaseKeeper
             Debug.Assert(table != null, "Table given is null");
 
             var tableIndex = table.IndexOf("!" + columnName);
-            Debug.Assert(tableIndex != -1, "Update entry in inexistent Column");
+            Debug.Assert(tableIndex > 0 && tableIndex <table.Count, "Update entry in inexistent Column");
             tableIndex++;
 
             while (tableIndex < table.Count && !table[tableIndex].StartsWith("!"))
